@@ -20,12 +20,14 @@ works exclusively with legal snuff tobacco. Don't be weird about it.
 ## Preview
 
 <p>
-  <img src="assets/screenshot-1.webp" width="230" alt="Ziehen tab with the official personal line">
-  <img src="assets/screenshot-2.webp" width="230" alt="Bestenliste podium — Maximilian eine Nasenlänge voraus">
-  <img src="assets/screenshot-3.webp" width="230" alt="Sniffify Wrapped year recap with doodle pie chart">
+  <img src="assets/screenshot-1.webp" width="180" alt="Ziehen tab with the official personal line">
+  <img src="assets/screenshot-2.webp" width="180" alt="Sniff session countdown with tobacco box, nose track and shoveler">
+  <img src="assets/screenshot-3.webp" width="180" alt="Success screen: Du bist spitze, stopwatch, nose trail and confetti">
+  <img src="assets/screenshot-4.webp" width="180" alt="Bestenliste podium — Maximilian eine Nasenlänge voraus">
+  <img src="assets/screenshot-5.webp" width="180" alt="Sniffify Wrapped year recap with doodle pie chart">
 </p>
 
-Demo video: [MP4](assets/demo.mp4) · [WebM](assets/demo.webm)
+Demo video (muted, 1.2×): [MP4](assets/demo.mp4) · [WebM](assets/demo.webm)
 *(all preview media downscaled and metadata-stripped)*
 
 ## The Gag, End to End
