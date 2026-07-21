@@ -50,6 +50,13 @@ auto-join the target — no pbxproj edits needed. Info.plist is generated;
 usage keys live as `INFOPLIST_KEY_*` build settings in `project.pbxproj`
 (both configs).
 
+## Signing
+
+`DEVELOPMENT_TEAM` never gets committed: a git clean filter (`.gitattributes`)
+strips it from `project.pbxproj` on the way into commits/diffs, while Xcode
+keeps it in the working copy for local signing. The filter driver is per-clone —
+run `just setup` once after a fresh clone.
+
 ## Conventions
 
 - Layers: App (entry) → Features (UI) → Core (domain) → Shared (components/theme).

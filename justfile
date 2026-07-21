@@ -4,6 +4,10 @@
 default:
     @just --list
 
+# One-time after a fresh clone: strip DEVELOPMENT_TEAM from commits (see CLAUDE.md "Signing")
+setup:
+    git config filter.stripteam.clean "sed '/DEVELOPMENT_TEAM/d'"
+
 # Format all Swift files
 format:
     swift format --in-place --recursive Sniffify/
