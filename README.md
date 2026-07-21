@@ -1,4 +1,7 @@
-# Sniffify 👃👑
+<div align="center">
+  <img src="assets/icon.png" width="217" alt="Sniffify app icon — crowned nose on paper">
+  <h1>Sniffify 👃👑</h1>
+</div>
 
 > „Maximilian ist dir eine Nasenlänge voraus."
 
