@@ -42,37 +42,31 @@ struct SniffResultOverlay: View {
 
 	private var successBody: some View {
 		ZStack {
-			// mascot flight + eraser share one keyframe value so they can't desync
+			// slow sweep along the line, then he stays put and keeps shoveling
 			KeyframeAnimator(initialValue: 0.0, trigger: mascotFlying) { progress in
-				if horizontal {
-					let x = lineFrame.minX - 70 + (lineFrame.width + 140) * progress
-					let erased = max(0, min(x - lineFrame.minX, lineFrame.width))
+				TimelineView(.animation) { context in
+					let shovelWobble = sin(context.date.timeIntervalSinceReferenceDate * 5) * 7
 
-					Rectangle()
-						.fill(PaperColors.paper)
-						.frame(width: erased, height: lineFrame.height + 8)
-						.position(x: lineFrame.minX + erased / 2, y: lineFrame.midY)
-
-					NoseDoodle(winged: true)
-						.frame(width: 90, height: 90)
-						.rotationEffect(.degrees(sin(progress * .pi * 4) * 8))
-						.position(x: x, y: lineFrame.midY - 30 - sin(progress * .pi) * 24)
-				} else {
-					let y = lineFrame.minY - 70 + (lineFrame.height + 140) * progress
-					let erased = max(0, min(y - lineFrame.minY, lineFrame.height))
-
-					Rectangle()
-						.fill(PaperColors.paper)
-						.frame(width: lineFrame.width + 8, height: erased)
-						.position(x: lineFrame.midX, y: lineFrame.minY + erased / 2)
-
-					NoseDoodle(winged: true)
-						.frame(width: 90, height: 90)
-						.rotationEffect(.degrees(sin(progress * .pi * 4) * 8))
-						.position(x: lineFrame.midX - 40 - sin(progress * .pi) * 24, y: y)
+					if horizontal {
+						ShovelerDoodle()
+							.frame(width: 130, height: 130)
+							.rotationEffect(.degrees(shovelWobble))
+							.position(
+								x: lineFrame.minX - 60 + (lineFrame.width + 60) * progress,
+								y: lineFrame.midY - 40 - sin(progress * .pi) * 24
+							)
+					} else {
+						ShovelerDoodle()
+							.frame(width: 130, height: 130)
+							.rotationEffect(.degrees(shovelWobble))
+							.position(
+								x: lineFrame.midX - 60 - sin(progress * .pi) * 24,
+								y: lineFrame.minY - 60 + (lineFrame.height + 60) * progress
+							)
+					}
 				}
 			} keyframes: { _ in
-				LinearKeyframe(1.0, duration: 1.8)
+				LinearKeyframe(1.0, duration: 2.6)
 			}
 
 			confetti

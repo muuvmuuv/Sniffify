@@ -48,15 +48,15 @@ struct SniffView: View {
 							.foregroundStyle(PaperColors.pencil)
 
 						HStack(spacing: AppSpacing.md) {
-							Text("👷")
-								.font(.system(size: 36))
+							BuilderDoodle()
+								.frame(width: 40)
 							SegmentedLineView()
 								.frame(
 									width: 120 + (lineLengthCm - 5) * 25,
 									height: CGFloat(lineWidthMm) * 2
 								)
-							Text("🚧")
-								.font(.system(size: 30))
+							ConeDoodle()
+								.frame(width: 28)
 						}
 
 						Text(

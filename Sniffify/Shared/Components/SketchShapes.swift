@@ -109,6 +109,20 @@ struct RoughCircle: Shape {
 	}
 }
 
+/// Free-form polyline through absolute points — used to draw the actual
+/// path the nose took during a session.
+struct TrailShape: Shape {
+	var points: [CGPoint]
+
+	func path(in rect: CGRect) -> Path {
+		var path = Path()
+		guard points.count > 1 else { return path }
+		path.move(to: points[0])
+		path.addLines(points)
+		return path
+	}
+}
+
 // MARK: - Doodle Button
 
 /// Hand-drawn button: handwriting label in a wobbly ink box on paper.

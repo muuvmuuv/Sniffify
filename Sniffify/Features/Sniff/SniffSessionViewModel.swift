@@ -49,6 +49,11 @@ final class SniffSessionViewModel {
 	private(set) var phase: Phase = .briefing
 	private(set) var touchVerdict: TouchVerdict = .none
 	private(set) var coveredSegments: Set<Int> = []
+	/// Where the nose actually went — drawn live and kept on the result
+	/// screen so a bad sniff is visible (and debuggable).
+	private(set) var noseTrail: [CGPoint] = []
+	/// Live 0...1 position of the nose along the line; the shoveler follows it.
+	private(set) var noseProgress: Double = 0
 	private(set) var isDetecting = false
 	private(set) var lastEvent: SniffAudioService.SniffEvent?
 	/// Set when the countdown hits zero; drives the challenge stopwatch.
@@ -117,6 +122,8 @@ final class SniffSessionViewModel {
 		phase = .briefing
 		touchVerdict = .none
 		coveredSegments = []
+		noseTrail = []
+		noseProgress = 0
 		sawSpike = false
 		audioFailed = false
 		lastEvent = nil
@@ -132,17 +139,15 @@ final class SniffSessionViewModel {
 		isDetecting = false
 	}
 
-	/// Countdown timeline: 0 s "5" … 5 s "0"/armed. Detection opens
+	/// Countdown timeline: 0 s "3" … 3 s "0"/armed. Detection opens
 	/// windowPadding before zero (a slightly early pull counts) and then
 	/// STAYS open: a botched pull doesn't fail, the stopwatch just runs
 	/// until the line is finished — or the challengeTimeout closes the site.
 	private func run() async {
-		for value in [5, 4, 3] {
-			phase = .countdown(value)
-			Feedback.tick()
-			try? await Task.sleep(for: .seconds(1))
-			if Task.isCancelled { return }
-		}
+		phase = .countdown(3)
+		Feedback.tick()
+		try? await Task.sleep(for: .seconds(1))
+		if Task.isCancelled { return }
 		phase = .countdown(2)
 		Feedback.tick()
 		try? await Task.sleep(for: .seconds(1 - Self.windowPadding + 1))
@@ -188,6 +193,8 @@ final class SniffSessionViewModel {
 
 	private func openDetection() {
 		coveredSegments = []
+		noseTrail = []
+		noseProgress = 0
 		sawSpike = false
 		lastEvent = nil
 		isDetecting = true
@@ -228,6 +235,29 @@ final class SniffSessionViewModel {
 			touchVerdict = .nose
 		} else if maxRadius > 0, touchVerdict == .none {
 			touchVerdict = .finger
+		}
+
+		// record the fattest touch's path; thin to >4 pt steps, cap growth
+		if let fattest = touches.max(by: { $0.radius < $1.radius }) {
+			let isNewPoint =
+				noseTrail.last.map {
+					hypot($0.x - fattest.point.x, $0.y - fattest.point.y) > 4
+				} ?? true
+			if isNewPoint {
+				noseTrail.append(fattest.point)
+				if noseTrail.count > 1500 {
+					noseTrail.removeFirst(500)
+				}
+			}
+
+			if lineFrame != .zero {
+				let horizontal = lineFrame.width >= lineFrame.height
+				let t =
+					horizontal
+					? (fattest.point.x - lineFrame.minX) / lineFrame.width
+					: (fattest.point.y - lineFrame.minY) / lineFrame.height
+				noseProgress = min(1, max(0, t))
+			}
 		}
 
 		guard lineFrame != .zero else { return }

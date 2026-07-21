@@ -66,6 +66,17 @@ struct SniffSessionView: View {
 					lineArea(layout: layout)
 				}
 
+				// the actual nose path, kept on the result screen — the shoveler
+				// "cleans it up" on success, so it fades under his sweep
+				TrailShape(points: vm.noseTrail)
+					.stroke(
+						PaperColors.marker.opacity(0.3),
+						style: StrokeStyle(lineWidth: 22, lineCap: .round, lineJoin: .round)
+					)
+					.opacity(vm.phase == .success ? 0 : 1)
+					.animation(.easeInOut(duration: 2.2).delay(0.6), value: vm.phase == .success)
+					.allowsHitTesting(false)
+
 				switch vm.phase {
 				case .briefing:
 					briefing
@@ -195,28 +206,67 @@ struct SniffSessionView: View {
 			.frame(width: layout.trackFrame.width, height: layout.trackFrame.height)
 			.position(x: layout.trackFrame.midX, y: layout.trackFrame.midY)
 
+			// the shoveler follows the nose on the far side of the box
+			if vm.isDetecting {
+				TimelineView(.animation) { context in
+					ShovelerDoodle()
+						.frame(width: 64)
+						.rotationEffect(
+							.degrees(sin(context.date.timeIntervalSinceReferenceDate * 5) * 7))
+				}
+				.position(shovelerPosition(layout: layout))
+				.animation(AppAnimations.smooth, value: vm.noseProgress)
+			}
+
 			if layout.axis == .vertical {
-				Text("👃")
-					.font(.system(size: 26))
-					.position(x: layout.trackFrame.midX, y: layout.trackFrame.minY - 24)
-				Text("👷")
-					.font(.system(size: 40))
-					.position(x: layout.boxFrame.midX, y: layout.boxFrame.minY - 34)
-				Text("🚧")
-					.font(.system(size: 32))
-					.position(x: layout.boxFrame.midX, y: layout.boxFrame.maxY + 30)
+				NoseDoodle(crowned: false, fill: .clear)
+					.frame(width: 26, height: 26)
+					.position(x: layout.trackFrame.midX, y: layout.trackFrame.minY - 22)
+				BuilderDoodle()
+					.frame(width: 46)
+					.position(x: layout.boxFrame.midX - 14, y: layout.boxFrame.minY - 34)
+				ConeDoodle()
+					.frame(width: 26)
+					.position(x: layout.boxFrame.midX + 24, y: layout.boxFrame.minY - 26)
+				ConeDoodle()
+					.frame(width: 26)
+					.position(x: layout.boxFrame.midX - 24, y: layout.boxFrame.maxY + 24)
+				BuilderDoodle()
+					.frame(width: 46)
+					.scaleEffect(x: -1)
+					.position(x: layout.boxFrame.midX + 14, y: layout.boxFrame.maxY + 34)
 			} else {
-				Text("👃")
-					.font(.system(size: 26))
-					.position(x: layout.trackFrame.minX - 26, y: layout.trackFrame.midY)
-				Text("👷")
-					.font(.system(size: 40))
-					.position(x: layout.boxFrame.minX - 36, y: layout.boxFrame.midY - 6)
-				Text("🚧")
-					.font(.system(size: 32))
-					.position(x: layout.boxFrame.maxX + 32, y: layout.boxFrame.midY)
+				NoseDoodle(crowned: false, fill: .clear)
+					.frame(width: 26, height: 26)
+					.position(x: layout.trackFrame.minX - 24, y: layout.trackFrame.midY)
+				BuilderDoodle()
+					.frame(width: 46)
+					.position(x: layout.boxFrame.minX - 38, y: layout.boxFrame.midY - 10)
+				ConeDoodle()
+					.frame(width: 26)
+					.position(x: layout.boxFrame.minX - 30, y: layout.boxFrame.midY + 24)
+				ConeDoodle()
+					.frame(width: 26)
+					.position(x: layout.boxFrame.maxX + 30, y: layout.boxFrame.midY + 24)
+				BuilderDoodle()
+					.frame(width: 46)
+					.scaleEffect(x: -1)
+					.position(x: layout.boxFrame.maxX + 38, y: layout.boxFrame.midY - 10)
 			}
 		}
+	}
+
+	private func shovelerPosition(layout: LineLayout) -> CGPoint {
+		if layout.axis == .vertical {
+			return CGPoint(
+				x: layout.boxFrame.maxX + 44,
+				y: layout.boxFrame.minY + layout.boxFrame.height * vm.noseProgress
+			)
+		}
+		return CGPoint(
+			x: layout.boxFrame.minX + layout.boxFrame.width * vm.noseProgress,
+			y: layout.boxFrame.maxY + 44
+		)
 	}
 
 	// MARK: - Phases
