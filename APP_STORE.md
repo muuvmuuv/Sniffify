@@ -183,6 +183,9 @@ ASC-ready PNGs live in **`assets/app-store/`** (01-ziehen … 05-wrapped,
 | ----------------- | ----------- | ---------------------------- |
 | iPad Pro 13" (M4) | 2064 x 2752 | Yes (target supports iPad)   |
 
+Real simulator captures live in `assets/app-store/ipad-01-splash.png` and
+`ipad-02-ziehen.png` (native 2064 × 2752, metadata-stripped).
+
 ### Suggested Screenshot Scenes
 
 1. **Ziehen** — the official line with builders, cones, and formula
