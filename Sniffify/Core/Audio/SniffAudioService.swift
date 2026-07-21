@@ -105,7 +105,8 @@ final class SniffAudioService {
 			}
 
 			// resume after a call/Siri interruption ends, else the window
-			// silently goes deaf
+			// silently goes deaf. iOS deactivates the session on interruption
+			// begin, so it MUST be reactivated before the engine can restart.
 			let observer = NotificationCenter.default.addObserver(
 				forName: AVAudioSession.interruptionNotification, object: session, queue: nil
 			) { [weak self] note in
@@ -113,6 +114,7 @@ final class SniffAudioService {
 					let raw = note.userInfo?[AVAudioSessionInterruptionTypeKey] as? UInt,
 					AVAudioSession.InterruptionType(rawValue: raw) == .ended
 				else { return }
+				try? AVAudioSession.sharedInstance().setActive(true)
 				try? self?.engine.start()
 			}
 
