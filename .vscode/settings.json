@@ -1,0 +1,8 @@
+{
+  "[swift]": {
+    "editor.defaultFormatter": "vknabel.vscode-apple-swift-format",
+    "editor.formatOnSave": true,
+    "editor.tabSize": 4,
+    "editor.insertSpaces": false
+  }
+}

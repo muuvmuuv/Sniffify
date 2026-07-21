@@ -1,0 +1,33 @@
+Instagram*
+
+# Xcode user data
+xcuserdata/
+*.xcuserstate
+
+# Build products
+build/
+DerivedData/
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+# CocoaPods (if used)
+Pods/
+
+# Carthage (if used)
+Carthage/Build/
+
+# Swift Package Manager
+.build/
+.swiftpm/
+
+# xcode-build-server (not needed with Package.swift)
+buildServer.json
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Claude Code / OpenCode local settings
+.claude/settings.local.json

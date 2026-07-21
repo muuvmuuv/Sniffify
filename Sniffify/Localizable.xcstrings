@@ -1,0 +1,337 @@
+{
+  "sourceLanguage" : "de",
+  "strings" : {
+    "(%lld Nasenkilometer, amtlich)" : {
+
+    },
+    "%@ cm" : {
+
+    },
+    "%@ m" : {
+
+    },
+    "%@ m Gesamtlänge" : {
+
+    },
+    "%lld" : {
+
+    },
+    "%lld Lines gezogen" : {
+
+    },
+    "%lld." : {
+
+    },
+    "⏱ %@ s" : {
+
+    },
+    "👃" : {
+
+    },
+    "👑" : {
+
+    },
+    "👷" : {
+
+    },
+    "🚧" : {
+
+    },
+    "Abbrechen" : {
+
+    },
+    "About" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Info"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "About"
+          }
+        }
+      }
+    },
+    "Alles zurücksetzen" : {
+
+    },
+    "Aufnahmen löschen" : {
+
+    },
+    "Bestenliste" : {
+
+    },
+    "BESTENLISTE" : {
+
+    },
+    "Daneben geniest!" : {
+
+    },
+    "Das ist ein Finger, du Schummler!" : {
+
+    },
+    "Daten" : {
+
+    },
+    "Debug" : {
+
+    },
+    "Deine offizielle Line" : {
+
+    },
+    "Deine offizielle Line: %@ cm" : {
+
+    },
+    "Die Baustelle bleibt bestehen." : {
+
+    },
+    "Die Nase ans Glas!" : {
+
+    },
+    "Die schnellste Nase" : {
+
+    },
+    "Die Wissenschaft braucht Daten." : {
+
+    },
+    "Du bist spitze!" : {
+
+    },
+    "Einstellungen" : {
+
+    },
+    "General" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Allgemein"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "General"
+          }
+        }
+      }
+    },
+    "Gewicht: %lld kg" : {
+
+    },
+    "Größe: %lld cm" : {
+
+    },
+    "halten" : {
+
+    },
+    "Home" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Start"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Home"
+          }
+        }
+      }
+    },
+    "Hör doch auf, du bist spitze!" : {
+
+    },
+    "Ich bin volljährig" : {
+
+    },
+    "Initialization Error" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Initialisierungsfehler"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Initialization Error"
+          }
+        }
+      }
+    },
+    "Ja, Nase auf null" : {
+
+    },
+    "Los geht's 👃" : {
+
+    },
+    "Maximilian ist dir eine Nasenlänge voraus." : {
+
+    },
+    "Mit Freunden" : {
+
+    },
+    "No settings yet" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Noch keine Einstellungen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No settings yet"
+          }
+        }
+      }
+    },
+    "Offizielle Line" : {
+
+    },
+    "Profil" : {
+
+    },
+    "Reine Satire unter Erwachsenen.\nFunktioniert ausschließlich mit Schnupftabak." : {
+
+    },
+    "Reine Satire unter Erwachsenen. Ab 18.\nFunktioniert ausschließlich mit Schnupftabak." : {
+
+    },
+    "Schnellste Nase: %@ s" : {
+
+    },
+    "Settings" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Einstellungen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Settings"
+          }
+        }
+      }
+    },
+    "Sniff-Aufnahmen speichern" : {
+
+    },
+    "SNIFFIFY" : {
+
+    },
+    "Sniffify Wrapped %lld" : {
+
+    },
+    "Start building your app here" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Beginne hier mit deiner App"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Start building your app here"
+          }
+        }
+      }
+    },
+    "Tabak hier rein" : {
+
+    },
+    "Tabak in die Box, Nase auf die lila Spur.\nTimer starten — bei Null ziehst du." : {
+
+    },
+    "Teilen 📤" : {
+
+    },
+    "Timer starten" : {
+
+    },
+    "Über" : {
+
+    },
+    "Version" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Version"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Version"
+          }
+        }
+      }
+    },
+    "W r a p p e d  %@" : {
+
+    },
+    "Welcome" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Willkommen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Welcome"
+          }
+        }
+      }
+    },
+    "Wirklich alles vergessen?" : {
+
+    },
+    "Wrapped" : {
+
+    },
+    "WÜRDIG 👃" : {
+
+    },
+    "Zeichnet das Mikrofon während des Zieh-Fensters als .caf auf — zum Kalibrieren der Erkennung. Auch per Dateien-App erreichbar." : {
+
+    },
+    "ZIEH!" : {
+
+    },
+    "Ziehen" : {
+
+    },
+    "Ziehen 👃" : {
+
+    },
+    "Zu Fuß wärst du damit" : {
+
+    }
+  },
+  "version" : "1.0"
+}
