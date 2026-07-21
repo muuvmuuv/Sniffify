@@ -83,3 +83,16 @@ from Settings → Debug:
 
 - [ARCHITECTURE.md](ARCHITECTURE.md) — layers, data flow, patterns
 - [CLAUDE.md](CLAUDE.md) — AI assistant guidance
+
+## License
+
+[CC BY-NC-SA 4.0](LICENSE) — share it, tinker with it, remix it, but:
+
+- **Attribution**: credit by linking back to this repository.
+- **NonCommercial**: no selling, no commercial use, in any form.
+- **ShareAlike**: anything built on it carries these same terms — it stays
+  free, forever.
+
+**Not covered by the license:** the original comedy sketch material in
+`assets/` (video, transcript, mockup frames) belongs to its creator —
+credit and source: <https://www.instagram.com/p/DbBXNMXi5J2/>.
