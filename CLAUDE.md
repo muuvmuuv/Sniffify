@@ -7,8 +7,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 Sniffify is a **satirical iOS gag app** for an adult friend who uses
 snuff tobacco (legal Schnupftabak). It recreates the fictional app from a
 German stand-up sketch (<https://www.instagram.com/p/DbBXNMXi5J2/>). The
-comedian's material (video/transcript/frames) is deliberately NOT in this
-public repo — never re-add it; link only. The app is never store-distributed;
+full sketch video and transcript are deliberately NOT in this public repo —
+never re-add them; only a handful of metadata-stripped mockup frames live in
+`assets/ref-*.jpg` as design reference. The app is never store-distributed;
 all user-facing copy is German satire. The content is intentional — keep it
 tobacco-themed and adults-only, and don't sand the jokes off.
 
