@@ -231,7 +231,7 @@
     "SNIFFIFY" : {
 
     },
-    "Sniffify Wrapped %lld" : {
+    "Sniffify Wrapped %@" : {
 
     },
     "Start building your app here" : {
