@@ -45,7 +45,10 @@ struct WrappedView: View {
 					card
 						.padding(.top, AppSpacing.xxl)
 
-					ShareLink(item: cardImage, preview: SharePreview("Sniffify Wrapped \(year)", image: cardImage)) {
+					ShareLink(
+						item: cardImage,
+						preview: SharePreview("Sniffify Wrapped \(String(year))", image: cardImage)
+					) {
 						Text("Teilen 📤")
 					}
 					.buttonStyle(DoodleButtonStyle(color: PaperColors.marker))

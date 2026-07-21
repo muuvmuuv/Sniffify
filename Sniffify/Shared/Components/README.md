@@ -1,30 +1,16 @@
 # Components
 
-Reusable UI components go here.
+Sniffify's hand-drawn kit. Everything paints with `PaperColors`/`DoodleFont`
+from the theme.
 
-## Guidelines
-
-- Keep components focused and single-purpose
-- Use AppTheme values for colors, spacing, etc.
-- Add previews for each component
-- Prefer composition over configuration flags
-
-## Example Component
-
-```swift
-struct CardView<Content: View>: View {
-    let content: Content
-
-    init(@ViewBuilder content: () -> Content) {
-        self.content = content()
-    }
-
-    var body: some View {
-        content
-            .padding(AppSpacing.cardPadding)
-            .background(AppColors.backgroundSecondary)
-            .clipShape(RoundedRectangle(cornerRadius: AppCornerRadius.large))
-            .cardShadow()
-    }
-}
-```
+| Component | What it is |
+|-----------|------------|
+| `SketchShapes` | Seeded-jitter RNG, RoughLine/RoughRect/RoughCircle, TrailShape, DoodleButtonStyle |
+| `PaperBackground` | Crumpled-paper canvas: warm paper, procedural creases, vignette |
+| `NoseDoodle` | The (crowned, optionally winged) nose — logo, wallpaper tile, confetti |
+| `NoseWallpaper` | Faint scattered crowned-nose pattern behind screens |
+| `SegmentedLineView` | The dashed line; covered dashes fade (live coverage display) |
+| `DoodlePie` | Pie-slice shape (countdown wedge) + two-slice Wrapped pie |
+| `ConstructionDoodles` | Builders, traffic cones, and the shoveling helper |
+| `TouchLineOverlay` | UIKit multi-touch reporter with `UITouch.majorRadius` |
+| `Feedback` | Haptics + tick sound moments |

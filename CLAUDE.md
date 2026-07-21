@@ -4,10 +4,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Sniffify is a **private satirical iOS gag app** for an adult friend who uses
+Sniffify is a **satirical iOS gag app** for an adult friend who uses
 snuff tobacco (legal Schnupftabak). It recreates the fictional app from a
-German stand-up sketch (<https://www.instagram.com/p/DbBXNMXi5J2/> — video,
-transcript, and mockup frames in `assets/`). It is never store-distributed;
+German stand-up sketch (<https://www.instagram.com/p/DbBXNMXi5J2/>). The
+comedian's material (video/transcript/frames) is deliberately NOT in this
+public repo — never re-add it; link only. The app is never store-distributed;
 all user-facing copy is German satire. The content is intentional — keep it
 tobacco-themed and adults-only, and don't sand the jokes off.
 
@@ -22,11 +23,14 @@ AVFoundation and small UIKit shims where SwiftUI has no API
   friends, Nasenlänge (7 cm, Maximilian's eternal lead), 1 cm = 1 km Wrapped
   conversion, destination ladder, points-per-cm for true physical line size.
 - `Features/Sniff/` — the core gag: `SniffSessionViewModel` state machine
-  (briefing → countdown → armed ±1.5 s window → success/fail; fusion = mic
-  spike AND ≥60 % nose-track coverage, degrading to touch-only when the mic
-  is denied or dead), locked full-screen `SniffSessionView` (idle timer off,
-  deferred system gestures, hold-the-lock escape), `SniffResultOverlay`
-  (mascot shovel flight keyed off ONE keyframe value).
+  (briefing → countdown 3→0 → armed challenge: detection opens 1.5 s before
+  zero and STAYS open until 100 % of the nose track is covered — audio spike
+  is only the anti-cheat gate, degrading to touch-only when the mic is
+  denied or dead; live stopwatch, ≤1.5 s = „perfekt", 45 s give-up timeout),
+  locked full-screen `SniffSessionView` (idle timer off, orientation locked
+  via `OrientationLock`, deferred system gestures, hold-the-lock escape,
+  nose-trail drawing), `SniffResultOverlay` (shoveler sweep + praise +
+  finish time).
 - `Core/Audio/SniffAudioService.swift` — AVAudioEngine tap, noise-floor EMA
   + spike gates, ZCR for the Röhrchen heuristic, optional `.caf` debug
   capture to `Documents/SniffCaptures/`.
@@ -63,8 +67,7 @@ run `just setup` once after a fresh clone.
   See [ARCHITECTURE.md](ARCHITECTURE.md).
 - Paper look everywhere: `PaperBackground` + `PaperColors`/`DoodleFont`
   (in `Shared/Theme/AppTheme.swift`), rough shapes from
-  `Shared/Components/SketchShapes.swift`. The template's dark `AppColors`
-  palette is intentionally unused.
+  `Shared/Components/SketchShapes.swift`.
 - Persistence: ONE SwiftData model (`SniffSession`), queried directly in
   views; the profile is `@AppStorage` — deliberately no stores.
 - Strings: German literals only, no `.xcstrings` entries — private gag app,

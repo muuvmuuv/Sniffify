@@ -7,67 +7,6 @@
 
 import SwiftUI
 
-// MARK: - App Colors
-
-enum AppColors {
-	// MARK: Brand Colors
-
-	/// Dark background color - customize for your brand
-	static let dark = Color(red: 0.067, green: 0.067, blue: 0.067)
-	/// Primary accent color - customize for your brand
-	static let primary = Color.accentColor
-	/// Light foreground color
-	static let light = Color(red: 0.96, green: 0.96, blue: 0.96)
-
-	// MARK: Semantic Colors
-
-	static let accent = Color.accentColor
-	static let accentLight = Color.accentColor.opacity(0.2)
-
-	// MARK: Text Colors
-
-	static let textPrimary = Color.primary
-	static let textSecondary = Color.secondary
-	static let textTertiary = Color(uiColor: .tertiaryLabel)
-
-	// MARK: Background Colors
-
-	static let backgroundPrimary = dark
-	static let backgroundSecondary = dark.opacity(0.9)
-
-	// MARK: Status Colors
-
-	static let success = Color.green
-	static let warning = Color.orange
-	static let error = Color.red
-}
-
-// MARK: - App Typography
-
-enum AppTypography {
-	// MARK: Titles
-
-	static let largeTitle = Font.largeTitle.weight(.bold)
-	static let title = Font.title.weight(.bold)
-	static let title2 = Font.title2.weight(.semibold)
-	static let title3 = Font.title3.weight(.semibold)
-
-	// MARK: Body
-
-	static let headline = Font.headline
-	static let body = Font.body
-	static let callout = Font.callout
-	static let subheadline = Font.subheadline
-	static let footnote = Font.footnote
-	static let caption = Font.caption
-	static let caption2 = Font.caption2
-
-	// MARK: Special
-
-	static let monospacedDigits = Font.body.monospacedDigit()
-	static let monospacedCaption = Font.caption.monospacedDigit()
-}
-
 // MARK: - App Spacing
 
 enum AppSpacing {
@@ -110,28 +49,11 @@ enum AppAnimations {
 	static let gentle = Animation.spring(response: 0.5, dampingFraction: 0.8)
 }
 
-// MARK: - View Modifiers
-
-extension View {
-	/// Applies standard card shadow.
-	func cardShadow() -> some View {
-		shadow(color: .black.opacity(0.15), radius: 8, y: 4)
-	}
-
-	/// Applies glass border overlay.
-	func glassBorder(cornerRadius: CGFloat = AppCornerRadius.large) -> some View {
-		overlay {
-			RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-				.strokeBorder(.white.opacity(0.2), lineWidth: 0.5)
-		}
-	}
-}
-
 // MARK: - Paper Theme
 
 /// Sniffify's hand-drawn look: warm paper, ink outlines, marker accents.
-/// Mirrors the crumpled-paper mockups from the sketch; used instead of the
-/// dark AppColors palette on every screen.
+/// Mirrors the crumpled-paper mockups from the sketch; every screen paints
+/// with these.
 enum PaperColors {
 	static let paper = Color(red: 0.94, green: 0.93, blue: 0.89)
 	static let ink = Color(red: 0.13, green: 0.12, blue: 0.11)

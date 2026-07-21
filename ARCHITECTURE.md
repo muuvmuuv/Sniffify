@@ -49,8 +49,8 @@ Sniffify/
 │
 └── Assets.xcassets/            # crowned-nose AppIcon, cream launch bg, marker accent
 
-assets/ (repo root)             # the original sketch video (metadata-stripped),
-                                # Whisper transcript + mockup frames = design reference
+assets/ (repo root)             # README preview media (screenshots, demo video, icon),
+                                # all downscaled + metadata-stripped
 ```
 
 ## Threading Model

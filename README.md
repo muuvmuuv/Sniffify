@@ -5,7 +5,7 @@
 
 > „Maximilian ist dir eine Nasenlänge voraus."
 
-A **private, satirical iOS gag app** — built as a joke gift for a friend who
+A **satirical iOS gag app** — built as a joke gift for a friend who
 enjoys snuff tobacco (Schnupftabak). It recreates, feature for feature, the
 fictional app pitched in a German stand-up bit: enter your body data, get your
 "official" line, sniff it off the screen at zero, get praised by a flying
@@ -13,9 +13,9 @@ crowned nose, lose to Maximilian forever, and receive a Spotify-Wrapped-style
 year recap of your Nasenkilometer.
 
 **Credit / inspiration:** the original sketch —
-<https://www.instagram.com/p/DbBXNMXi5J2/>
-A metadata-stripped copy plus its transcript and the comedian's hand-drawn
-mockup frames (our entire design spec) live in [`assets/`](assets/).
+<https://www.instagram.com/p/DbBXNMXi5J2/> — go watch it, the comedian's
+hand-drawn mockups are this app's entire design spec. (His material is
+deliberately not mirrored in this repo; it's his, not ours.)
 
 **This app is satire.** Adults only, never distributed on any store, and it
 works exclusively with legal snuff tobacco. Don't be weird about it.
@@ -40,13 +40,17 @@ Demo video (muted, 1.2×): [MP4](assets/demo.mp4) · [WebM](assets/demo.webm)
 2. **Ziehen** — the tobacco goes into a hand-drawn box rendered at **true
    physical size** (points-per-cm), marked out like a construction site. A
    parallel purple **nose track** shows where the nose glides — next to the
-   tobacco, not through it. Film-style countdown 5→0, then a ±1.5 s window in
-   which **microphone spike + nose-on-glass coverage** must land together.
-   The screen stays awake, system edges are deferred, and the only exit is
-   holding the little lock for 1.5 s. A nose fat enough on the glass earns
-   „WÜRDIG 👃"; a finger gets called out as cheating. Success: the winged
-   crowned nose shovels the line away — „Du bist spitze!". The acoustic
-   analysis even guesses Röhrchen vs. Direktzug.
+   tobacco, not through it. Film-style countdown 3→0, then the challenge:
+   the line must be **completely gone** — every dash of the track
+   nose-covered — while the mic listens as an anti-cheat gate. A botched
+   pull doesn't fail; the stopwatch just runs (finish within 1.5 s of zero
+   for „PERFEKT!"). The little shoveler follows your nose the whole way and
+   sweeps up on success — „Du bist spitze!". Screen stays awake, rotation is
+   locked, system edges are deferred; the only exits are finishing, giving
+   up for 45 s, or holding the little lock. A nose fat enough on the glass
+   earns „WÜRDIG 👃"; a finger gets called out as cheating. The acoustic
+   analysis even guesses Röhrchen vs. Direktzug, and your actual nose path
+   is drawn on the result screen as evidence.
 3. **Bestenliste** — podium of „Die schnellste Nase". Maximilian is pinned
    exactly one Nasenlänge (7 cm) ahead of you. Forever. That's the joke.
 4. **Wrapped** — year totals converted at the official rate of
@@ -96,6 +100,5 @@ from Settings → Debug:
 - **ShareAlike**: anything built on it carries these same terms — it stays
   free, forever.
 
-**Not covered by the license:** the original comedy sketch material in
-`assets/` (video, transcript, mockup frames) belongs to its creator —
+The original comedy sketch this app is based on belongs to its creator —
 credit and source: <https://www.instagram.com/p/DbBXNMXi5J2/>.
