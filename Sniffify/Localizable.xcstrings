@@ -57,6 +57,9 @@
     "Aufnahmen löschen" : {
 
     },
+    "Automatisch" : {
+
+    },
     "Bestenliste" : {
 
     },
@@ -99,6 +102,9 @@
     "Einstellungen" : {
 
     },
+    "Figur" : {
+
+    },
     "General" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -123,6 +129,9 @@
 
     },
     "halten" : {
+
+    },
+    "Helfer" : {
 
     },
     "Home" : {
@@ -193,7 +202,16 @@
         }
       }
     },
+    "Nur Sandmännchen" : {
+
+    },
+    "Nur Schaufel-Helfer" : {
+
+    },
     "Offizielle Line" : {
+
+    },
+    "Ohne Auswahl entscheidet die Uhrzeit: tagsüber schaufelt der gelbe Helfer, ab 19 Uhr übernimmt das Sandmännchen." : {
 
     },
     "Profil" : {

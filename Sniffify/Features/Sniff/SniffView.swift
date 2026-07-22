@@ -47,14 +47,34 @@ struct SniffView: View {
 							.font(DoodleFont.hand(17))
 							.foregroundStyle(PaperColors.pencil)
 
-						HStack(spacing: AppSpacing.md) {
+						HStack(alignment: .bottom, spacing: AppSpacing.md) {
 							BuilderDoodle()
 								.frame(width: 40)
+							let previewWidth = 120 + (lineLengthCm - 5) * 25
+							let lineHeight = CGFloat(lineWidthMm) * 2
 							SegmentedLineView()
-								.frame(
-									width: 120 + (lineLengthCm - 5) * 25,
-									height: CGFloat(lineWidthMm) * 2
-								)
+								.frame(width: previewWidth, height: lineHeight)
+								.overlay(alignment: .topLeading) {
+									// helper patrols the line, pushing the heap ahead of his shovel;
+									// feet (78–85 % of the 80 pt doodle) land inside the line band
+									TimelineView(.animation) { context in
+										let t = context.date.timeIntervalSinceReferenceDate
+										let progress = (sin(t * 0.7) + 1) / 2
+										HStack(alignment: .bottom, spacing: -8) {
+											SnowHeapDoodle()
+												.frame(width: 44, height: 20)
+												.offset(y: -8)
+											// explicit height: the overlay proposes the line's ~10 pt,
+											// which would shrink the aspect-fitted doodle to 10×10
+											LineHelperDoodle()
+												.frame(width: 80, height: 80)
+												.rotationEffect(.degrees(sin(t * 5) * 4))
+										}
+										.offset(
+											x: progress * max(0, previewWidth - 116), y: lineHeight / 2 - 68)
+									}
+								}
+								.padding(.top, 48)
 							ConeDoodle()
 								.frame(width: 28)
 						}
@@ -103,6 +123,33 @@ struct SniffView: View {
 				micAuthorized: micAuthorized,
 				debugCapture: debugAudioCapture
 			)
+		}
+	}
+}
+
+/// The little powder heap the shovel buddy works on next to the preview line.
+private struct SnowHeapDoodle: View {
+	var body: some View {
+		Canvas { context, size in
+			var mound = Path()
+			mound.move(to: CGPoint(x: 0, y: size.height))
+			mound.addQuadCurve(
+				to: CGPoint(x: size.width * 0.7, y: size.height),
+				control: CGPoint(x: size.width * 0.35, y: -size.height * 0.5))
+			mound.closeSubpath()
+			context.fill(mound, with: .color(.white))
+			context.stroke(
+				mound, with: .color(PaperColors.pencil),
+				style: StrokeStyle(lineWidth: 1.5, lineJoin: .round))
+
+			// loose grains flying by the shovel blade
+			for (x, y, r): (CGFloat, CGFloat, CGFloat) in [
+				(size.width * 0.82, size.height * 0.5, 1.7), (size.width * 0.95, size.height * 0.75, 1.3),
+			] {
+				let grain = Path(ellipseIn: CGRect(x: x - r, y: y - r, width: r * 2, height: r * 2))
+				context.fill(grain, with: .color(.white))
+				context.stroke(grain, with: .color(PaperColors.pencil), style: StrokeStyle(lineWidth: 1))
+			}
 		}
 	}
 }

@@ -48,7 +48,7 @@ struct SniffResultOverlay: View {
 					let shovelWobble = sin(context.date.timeIntervalSinceReferenceDate * 5) * 7
 
 					if horizontal {
-						ShovelerDoodle()
+						LineHelperDoodle()
 							.frame(width: 130, height: 130)
 							.rotationEffect(.degrees(shovelWobble))
 							.position(
@@ -56,7 +56,7 @@ struct SniffResultOverlay: View {
 								y: lineFrame.midY - 40 - sin(progress * .pi) * 24
 							)
 					} else {
-						ShovelerDoodle()
+						LineHelperDoodle()
 							.frame(width: 130, height: 130)
 							.rotationEffect(.degrees(shovelWobble))
 							.position(

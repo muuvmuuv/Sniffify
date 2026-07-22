@@ -209,7 +209,7 @@ struct SniffSessionView: View {
 			// the shoveler follows the nose on the far side of the box
 			if vm.isDetecting {
 				TimelineView(.animation) { context in
-					ShovelerDoodle()
+					LineHelperDoodle()
 						.frame(width: 64)
 						.rotationEffect(
 							.degrees(sin(context.date.timeIntervalSinceReferenceDate * 5) * 7))

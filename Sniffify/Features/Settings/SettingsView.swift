@@ -13,6 +13,7 @@ struct SettingsView: View {
 	@AppStorage("weightKg") private var weightKg = 80.0
 	@AppStorage("hasOnboarded") private var hasOnboarded = false
 	@AppStorage("debugAudioCapture") private var debugAudioCapture = false
+	@AppStorage("lineHelper") private var lineHelper = ""
 	@Environment(\.modelContext) private var modelContext
 	@State private var confirmReset = false
 	@State private var captures: [URL] = []
@@ -40,6 +41,20 @@ struct SettingsView: View {
 							)
 						}
 						.font(DoodleFont.hand(16))
+					}
+
+					Section("Helfer") {
+						Picker("Figur", selection: $lineHelper) {
+							Text("Automatisch").tag("")
+							Text("Nur Schaufel-Helfer").tag("shoveler")
+							Text("Nur Sandmännchen").tag("sandmann")
+						}
+						.font(DoodleFont.hand(16))
+						Text(
+							"Ohne Auswahl entscheidet die Uhrzeit: tagsüber schaufelt der gelbe Helfer, ab 19 Uhr übernimmt das Sandmännchen."
+						)
+						.font(DoodleFont.hand(12))
+						.foregroundStyle(PaperColors.pencil)
 					}
 
 					Section("Daten") {
