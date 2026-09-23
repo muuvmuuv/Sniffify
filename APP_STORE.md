@@ -154,9 +154,9 @@ and the only defensible one in review.
 | Field              | Value                                                         |
 | ------------------ | ------------------------------------------------------------- |
 | App Store listing  | — (fill in after first approval)                              |
-| Marketing URL      | https://github.com/philippobol/Sniffify                       |
-| Support URL        | https://github.com/philippobol/Sniffify/issues                |
-| Privacy Policy URL | https://github.com/philippobol/Sniffify/blob/main/PRIVACY.md |
+| Marketing URL      | https://github.com/muuvmuuv/Sniffify                          |
+| Support URL        | https://github.com/muuvmuuv/Sniffify/issues                   |
+| Privacy Policy URL | https://github.com/muuvmuuv/Sniffify/blob/main/PRIVACY.md     |
 
 ## What's New / Changelog
 

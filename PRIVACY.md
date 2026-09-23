@@ -34,4 +34,4 @@ Sniffify collects, transmits, and shares **no data whatsoever**:
 ## Contact
 
 Questions: open an issue at
-<https://github.com/philippobol/Sniffify/issues>.
+<https://github.com/muuvmuuv/Sniffify/issues>.

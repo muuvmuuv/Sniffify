@@ -10,6 +10,18 @@ made, move these items to a versioned section matching the git tag.
 ### German
 
 ```
+```
+
+### English
+
+```
+```
+
+## Version 1.1.0
+
+### German
+
+```
 • Gezogen wird jetzt durchs Röhrchen: Das Mikrofon hört deinen Zug, und die Line verschwindet, während du ziehst — kein Nase-aufs-Glas mehr, kein „Das ist ein Finger"
 • Neue Zieh-Erkennung: Sniffify hört nur aufs Zischen des Zugs — Stimmen, Kneipen-Gerede, Klopfen und Klicks zählen nicht, auch wenn sie lauter sind; ein kräftiger Zug räumt die Line in einem Rutsch ab
 • Nix gehört? „Wir hören nix — kräftiger ziehen!" Noch was übrig? „Nachziehen!"
