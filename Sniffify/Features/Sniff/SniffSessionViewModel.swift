@@ -3,9 +3,9 @@
 //  Sniffify
 //
 //  State machine for one locked sniff session: film countdown, a detection
-//  window around zero, and the audio + touch fusion verdict. The line runs
-//  along the screen's long axis; coverage follows whichever axis the
-//  lineFrame is oriented on.
+//  window that opens shortly before zero, and the line clearing as the mic
+//  hears the pull. Pulls go through a tube, which a touchscreen can't see —
+//  so sound is the only input.
 //
 
 import Foundation
@@ -23,81 +23,72 @@ final class SniffSessionViewModel {
 		case fail
 	}
 
-	enum TouchVerdict: Equatable {
-		case none
-		case finger
-		case nose
-	}
-
 	static let segmentCount = 20
-	// The line must be COMPLETELY gone — the remaining dashes on screen are
-	// the visible to-do list. Audio is only the anti-cheat gate on top.
-	static let coverageThreshold = 1.0
-	// ponytail: tuning knobs — how fat a touch must be to count as a nose,
-	// and the window around zero.
-	static let noseRadiusThreshold: CGFloat = 45
+	/// Opens detection this long before zero, so a slightly early pull counts.
 	static let windowPadding: TimeInterval = 1.5
-	/// Finishing within this after zero counts as "perfekt".
-	static let perfectTime: TimeInterval = 1.5
 	/// The challenge never stops on a botched pull — but after this long the
 	/// construction site closes.
 	static let challengeTimeout: TimeInterval = 45
+	/// Nothing heard for this long since zero or the last pull: nudge.
+	static let quietHint: TimeInterval = 3
 	// ponytail: pure guess until debug captures exist; calibrate with real
 	// tube vs. direct recordings from Settings > Debug.
 	static let tubeZCRThreshold: Float = 0.25
 
 	private(set) var phase: Phase = .briefing
-	private(set) var touchVerdict: TouchVerdict = .none
-	private(set) var coveredSegments: Set<Int> = []
-	/// Where the nose actually went — drawn live and kept on the result
-	/// screen so a bad sniff is visible (and debuggable).
-	private(set) var noseTrail: [CGPoint] = []
-	/// Live 0...1 position of the nose along the line; the shoveler follows it.
-	private(set) var noseProgress: Double = 0
+	/// 0...1 share of the line pulled so far; dashes vanish from the start
+	/// and the shoveler follows.
+	private(set) var progress: Double = 0
 	private(set) var isDetecting = false
-	private(set) var lastEvent: SniffAudioService.SniffEvent?
+	/// Last moment the mic heard pulling.
+	private(set) var lastHeardAt: Date?
+	/// Separate attempts it took; every extra one costs a grade.
+	private(set) var pullCount = 0
+	/// The engine couldn't start — nothing can be heard this session.
+	private(set) var micFailed = false
 	/// Set when the countdown hits zero; drives the challenge stopwatch.
 	private(set) var armedAt: Date?
 	/// Seconds from zero to a completed line (0 for early finishers).
 	private(set) var finishSeconds: Double?
 
-	/// The dashed line's frame in the session's full-screen coordinate space;
-	/// set by the view, consumed by the coverage math. Orientation is derived
-	/// from its aspect (taller than wide = vertical line).
-	var lineFrame: CGRect = .zero
-
 	let lineLengthCm: Double
 	let lineWidthMm: Double
 	let withFriends: Bool
-	let micAuthorized: Bool
 	let debugCapture: Bool
 
-	private var sawSpike = false
-	private var audioFailed = false
+	private var pulledSeconds: TimeInterval = 0
+	/// Pull-time-weighted ZCR sum, for the texture verdict.
+	private var zcrSum: Float = 0
 	private var runTask: Task<Void, Never>?
 	private var audioTask: Task<Void, Never>?
 	private var timeoutTask: Task<Void, Never>?
-	private let audio = SniffAudioService()
 
-	init(
-		lineLengthCm: Double, lineWidthMm: Double, withFriends: Bool, micAuthorized: Bool,
-		debugCapture: Bool = false
-	) {
+	init(lineLengthCm: Double, lineWidthMm: Double, withFriends: Bool, debugCapture: Bool = false) {
 		self.lineLengthCm = lineLengthCm
 		self.lineWidthMm = lineWidthMm
 		self.withFriends = withFriends
-		self.micAuthorized = micAuthorized
 		self.debugCapture = debugCapture
 	}
 
-	var coverage: Double {
-		Double(coveredSegments.count) / Double(Self.segmentCount)
+	var clearedSegments: Int {
+		Int(progress * Double(Self.segmentCount))
 	}
 
-	/// Comedic acoustic classification, only meaningful after a spike.
+	/// The mic heard pulling just now.
+	func isPulling(at date: Date) -> Bool {
+		lastHeardAt.map { date.timeIntervalSince($0) < 0.3 } ?? false
+	}
+
+	/// Armed, but nothing heard for `quietHint` since zero or the last pull.
+	func isQuiet(at date: Date) -> Bool {
+		guard phase == .armed, let armedAt else { return false }
+		return date.timeIntervalSince(max(armedAt, lastHeardAt ?? armedAt)) > Self.quietHint
+	}
+
+	/// Comedic acoustic classification of the whole pull.
 	var analysisVerdict: String? {
-		guard let event = lastEvent else { return nil }
-		return event.zcr > Self.tubeZCRThreshold
+		guard pulledSeconds > 0 else { return nil }
+		return zcrSum / Float(pulledSeconds) > Self.tubeZCRThreshold
 			? "Analyse: Röhrchen erkannt 🥤"
 			: "Analyse: Direktzug, respektvoll klassisch 👃"
 	}
@@ -112,24 +103,21 @@ final class SniffSessionViewModel {
 
 	func start() {
 		guard phase == .briefing else { return }
+		startListening()
 		runTask = Task { await run() }
 	}
 
 	func reset() {
-		runTask?.cancel()
-		audioTask?.cancel()
-		timeoutTask?.cancel()
+		cancel()
 		phase = .briefing
-		touchVerdict = .none
-		coveredSegments = []
-		noseTrail = []
-		noseProgress = 0
-		sawSpike = false
-		audioFailed = false
-		lastEvent = nil
+		progress = 0
+		pulledSeconds = 0
+		zcrSum = 0
+		lastHeardAt = nil
+		pullCount = 0
+		micFailed = false
 		armedAt = nil
 		finishSeconds = nil
-		isDetecting = false
 	}
 
 	func cancel() {
@@ -139,26 +127,29 @@ final class SniffSessionViewModel {
 		isDetecting = false
 	}
 
-	/// Countdown timeline: 0 s "3" … 3 s "0"/armed. Detection opens
-	/// windowPadding before zero (a slightly early pull counts) and then
-	/// STAYS open: a botched pull doesn't fail, the stopwatch just runs
-	/// until the line is finished — or the challengeTimeout closes the site.
+	/// Countdown on fixed deadlines, so ticks never drift: "3" at 0 s … "0"
+	/// (armed) at 3 s. Detection opens windowPadding before zero and then
+	/// STAYS open: a botched pull doesn't fail, the stopwatch just runs until
+	/// the line is gone — or the challengeTimeout closes the site.
 	private func run() async {
+		let zero = ContinuousClock.now + .seconds(3)
+		/// Sleeps until `seconds` before zero; false once cancelled.
+		func reach(_ seconds: Double) async -> Bool {
+			try? await Task.sleep(until: zero - .seconds(seconds))
+			return !Task.isCancelled
+		}
+
 		phase = .countdown(3)
 		Feedback.tick()
-		try? await Task.sleep(for: .seconds(1))
-		if Task.isCancelled { return }
+		guard await reach(2) else { return }
 		phase = .countdown(2)
 		Feedback.tick()
-		try? await Task.sleep(for: .seconds(1 - Self.windowPadding + 1))
-		if Task.isCancelled { return }
-		openDetection()
-		try? await Task.sleep(for: .seconds(Self.windowPadding - 1))
-		if Task.isCancelled { return }
+		guard await reach(Self.windowPadding) else { return }
+		isDetecting = true
+		guard await reach(1) else { return }
 		phase = .countdown(1)
 		Feedback.tick()
-		try? await Task.sleep(for: .seconds(1))
-		if Task.isCancelled { return }
+		guard await reach(0) else { return }
 		phase = .armed
 		Feedback.tick()
 		armedAt = .now
@@ -172,9 +163,7 @@ final class SniffSessionViewModel {
 	}
 
 	private func checkCompletion() {
-		guard phase == .armed else { return }
-		let audioUsable = micAuthorized && !audioFailed
-		if coverage >= Self.coverageThreshold, !audioUsable || sawSpike {
+		if phase == .armed, progress >= 1 {
 			finish(success: true)
 		}
 	}
@@ -191,99 +180,31 @@ final class SniffSessionViewModel {
 		success ? Feedback.success() : Feedback.failure()
 	}
 
-	private func openDetection() {
-		coveredSegments = []
-		noseTrail = []
-		noseProgress = 0
-		sawSpike = false
-		lastEvent = nil
-		isDetecting = true
-		guard micAuthorized else { return }
-		if debugCapture {
-			let stamp = Date.now.formatted(
-				.iso8601.year().month().day().timeSeparator(.omitted).time(includingFractionalSeconds: false))
-			audio.captureURL = Self.capturesDirectory.appending(path: "sniff-\(stamp).caf")
-		}
-		// keep consuming until the window closes so debug capture spans the
-		// whole window and the last spike wins the texture analysis
-		audioFailed = false
-		audioTask = Task { [audio] in
-			for await event in audio.events() {
-				sawSpike = true
-				lastEvent = event
+	/// The mic starts with the countdown, so the noise floor has settled by
+	/// the time detection opens; pulls heard before that are ignored. Keeps
+	/// consuming until the verdict so a debug capture spans the whole run.
+	private func startListening() {
+		let stamp = Date.now.formatted(
+			.iso8601.year().month().day().timeSeparator(.omitted).time(includingFractionalSeconds: false))
+		let captureURL = debugCapture ? Self.capturesDirectory.appending(path: "sniff-\(stamp).caf") : nil
+		let requiredSeconds = lineLengthCm * Sniffonomics.pullSecondsPerCm
+		audioTask = Task {
+			for await pull in SniffAudioService.pulls(captureURL: captureURL) where isDetecting {
+				// a pull already running when detection opened counts too
+				if pull.startsPull || pullCount == 0 {
+					pullCount += 1
+				}
+				pulledSeconds += pull.seconds
+				zcrSum += pull.zcr * Float(pull.seconds)
+				lastHeardAt = .now
+				progress = min(1, pulledSeconds / requiredSeconds)
 				checkCompletion()
 			}
 			// stream ended without being cancelled = engine never ran
-			// (mic busy, start failure) -> judge by touch alone
+			// (mic busy, start failure)
 			if !Task.isCancelled {
-				audioFailed = true
-				checkCompletion()
+				micFailed = true
 			}
 		}
-	}
-
-	// MARK: - Touch Input
-
-	/// Coverage treats each touch as a CIRCLE, not a point: a nose's contact
-	/// area reaches the track even when its centroid sits off to the side,
-	/// and one fat contact covers a span of segments, not just one.
-	func handleTouches(_ touches: [TrackTouch]) {
-		guard isDetecting else { return }
-
-		let maxRadius = touches.map(\.radius).max() ?? 0
-		if maxRadius >= Self.noseRadiusThreshold {
-			touchVerdict = .nose
-		} else if maxRadius > 0, touchVerdict == .none {
-			touchVerdict = .finger
-		}
-
-		// record the fattest touch's path; thin to >4 pt steps, cap growth
-		if let fattest = touches.max(by: { $0.radius < $1.radius }) {
-			let isNewPoint =
-				noseTrail.last.map {
-					hypot($0.x - fattest.point.x, $0.y - fattest.point.y) > 4
-				} ?? true
-			if isNewPoint {
-				noseTrail.append(fattest.point)
-				if noseTrail.count > 1500 {
-					noseTrail.removeFirst(500)
-				}
-			}
-
-			if lineFrame != .zero {
-				let horizontal = lineFrame.width >= lineFrame.height
-				let t =
-					horizontal
-					? (fattest.point.x - lineFrame.minX) / lineFrame.width
-					: (fattest.point.y - lineFrame.minY) / lineFrame.height
-				noseProgress = min(1, max(0, t))
-			}
-		}
-
-		guard lineFrame != .zero else { return }
-		let horizontal = lineFrame.width >= lineFrame.height
-		let length = horizontal ? lineFrame.width : lineFrame.height
-		let band = (horizontal ? lineFrame.height : lineFrame.width) / 2 + 30
-		let n = Self.segmentCount
-
-		for touch in touches {
-			let offAxis =
-				horizontal
-				? abs(touch.point.y - lineFrame.midY) : abs(touch.point.x - lineFrame.midX)
-			guard offAxis <= band + touch.radius else { continue }
-			let tCenter =
-				horizontal
-				? (touch.point.x - lineFrame.minX) / length
-				: (touch.point.y - lineFrame.minY) / length
-			let tSpread = touch.radius / length
-			guard tCenter + tSpread >= 0, tCenter - tSpread <= 1 else { continue }
-			let low = max(0, Int(((tCenter - tSpread) * CGFloat(n)).rounded(.down)))
-			let high = min(n - 1, Int(((tCenter + tSpread) * CGFloat(n)).rounded(.down)))
-			for segment in low...high {
-				coveredSegments.insert(segment)
-			}
-		}
-
-		checkCompletion()
 	}
 }

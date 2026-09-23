@@ -18,6 +18,7 @@ struct SniffResultOverlay: View {
 	let lineFrame: CGRect
 	var analysis: String?
 	var finishSeconds: Double?
+	var pulls = 1
 	var onDone: () -> Void
 	var onRetry: () -> Void
 
@@ -88,15 +89,22 @@ struct SniffResultOverlay: View {
 				}
 				if praiseStep >= 1, let finishSeconds {
 					Text(
-						"⏱ \(finishSeconds.formatted(.number.precision(.fractionLength(1)))) s"
-							+ (finishSeconds <= SniffSessionViewModel.perfectTime ? " — PERFEKT!" : "")
+						"⏱ \(finishSeconds.formatted(.number.precision(.fractionLength(1)))) s · \(pulls == 1 ? "1 Zug" : "\(pulls) Züge")"
 					)
 					.font(DoodleFont.heading(18))
-					.foregroundStyle(
-						finishSeconds <= SniffSessionViewModel.perfectTime
-							? PaperColors.check : PaperColors.ink
-					)
+					.foregroundStyle(PaperColors.ink)
 					.transition(.scale.combined(with: .opacity))
+				}
+				if praiseStep >= 2, let finishSeconds {
+					let grade = Sniffonomics.grade(pulls: pulls, seconds: finishSeconds)
+					Text(Sniffonomics.gradeVerdict(grade))
+						.font(DoodleFont.heading(18))
+						.multilineTextAlignment(.center)
+						.foregroundStyle(
+							grade <= 2 ? PaperColors.check : grade <= 4 ? PaperColors.ink : PaperColors.cross
+						)
+						.rotationEffect(.degrees(-2))
+						.transition(.scale.combined(with: .opacity))
 				}
 				if praiseStep >= 2, let analysis {
 					Text(analysis)

@@ -10,11 +10,29 @@ made, move these items to a versioned section matching the git tag.
 ### German
 
 ```
+• Gezogen wird jetzt durchs Röhrchen: Das Mikrofon hört deinen Zug, und die Line verschwindet, während du ziehst — kein Nase-aufs-Glas mehr, kein „Das ist ein Finger"
+• Neue Zieh-Erkennung: Sniffify hört nur aufs Zischen des Zugs — Stimmen, Kneipen-Gerede, Klopfen und Klicks zählen nicht, auch wenn sie lauter sind; ein kräftiger Zug räumt die Line in einem Rutsch ab
+• Nix gehört? „Wir hören nix — kräftiger ziehen!" Noch was übrig? „Nachziehen!"
+• Amtliche Schulnote von 1 bis 6: ein Zug in Bestzeit ist eine 1, jedes Nachziehen und jedes Trödeln kostet eine Note
+• Die Bestenliste zählt jetzt den Notendurchschnitt (abgebrochene Lines sind eine 6) — Maximilian ist dir natürlich trotzdem voraus, zur Not mit einer 0,9
+• Sniffify Wrapped zeigt deinen Notendurchschnitt des Jahres
+• Der Schaufel-Helfer folgt deinem Zug flüssig statt ruckelig
+• Countdown ruckelt nicht mehr, und „1" und „0" ticken und vibrieren endlich hörbar
+• Ohne Mikrofon-Erlaubnis gibt's einen Hinweis mit direktem Weg in die Einstellungen
 ```
 
 ### English
 
 ```
+• You now pull through a tube: the microphone hears your pull and the line vanishes while you pull — no more nose on the glass, no more "that's a finger"
+• New pull detection: Sniffify only listens for the hiss of the pull — voices, bar chatter, taps and clicks don't count, even when louder; one strong pull clears the line in one go
+• Nothing heard? "We hear nothing — pull harder!" Something left? "Pull again!"
+• Official school grade from 1 to 6: one pull in record time is a 1, every extra attempt and every bit of dawdling costs a grade
+• The leaderboard now ranks by grade average (unfinished lines count as a 6) — Maximilian is still ahead of you, with a 0.9 if he has to
+• Sniffify Wrapped shows your grade average for the year
+• The shovel buddy follows your pull smoothly instead of jerkily
+• The countdown no longer stutters, and "1" and "0" finally tick and buzz audibly
+• Without microphone permission you get a hint with a direct way into Settings
 ```
 
 ## Version 1.0.0

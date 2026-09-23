@@ -41,15 +41,15 @@ Basierend auf einem Stand-up-Gag: die App, die es nie hätte geben dürfen — j
 DEINE AMTLICHE LINE
 • Größe und Gewicht eingeben — die Wissenschaft braucht Daten
 • Deine persönliche Line wird amtlich berechnet und in ECHTER GRÖSSE angezeigt (zentimetergenau, Bildschirm-Physik sei Dank)
-• Wie eine Baustelle abgesteckt, daneben die lila Nasen-Spur
+• Wie eine Baustelle abgesteckt, daneben die lila Fortschritts-Spur
 
 DIE CHALLENGE
 • Film-Countdown 3… 2… 1… ZIEH!
 • Die Line muss KOMPLETT weg — jeder Strich zählt
 • Verpatzter Zug? Kein Problem: Die Stoppuhr läuft einfach weiter
 • Unter 1,5 Sekunden: PERFEKT!
-• Mikrofon-Analyse als Schummel-Schutz
-• Nasenerkennung: eine echte Nase auf dem Glas ist WÜRDIG, ein Finger wird öffentlich beschämt
+• Das Mikrofon hört deinen Zug durchs Röhrchen — die Line verschwindet, während du ziehst
+• Nix gehört? „Wir hören nix — kräftiger ziehen!"
 • Der kleine Schaufel-Helfer begleitet jeden Zug und räumt hinterher auf
 
 BESTENLISTE
@@ -99,15 +99,15 @@ Based on a stand-up comedy bit: the app that should never have existed — now i
 YOUR OFFICIAL LINE
 • Enter height and weight — science needs data
 • Your personal line is officially calculated and rendered at TRUE physical size (centimeter-accurate, thanks to screen physics)
-• Marked out like a construction site, with the purple nose track alongside
+• Marked out like a construction site, with the purple progress track alongside
 
 THE CHALLENGE
 • Film-style countdown 3… 2… 1… PULL!
 • The line must be COMPLETELY gone — every dash counts
 • Botched the pull? No problem: the stopwatch just keeps running
 • Under 1.5 seconds: PERFEKT!
-• Microphone analysis as an anti-cheat gate
-• Nose detection: a real nose on the glass is WORTHY, a finger gets publicly shamed
+• The microphone hears your pull through the tube — the line vanishes while you pull
+• Nothing heard? "We hear nothing — pull harder!"
 • The little shovel buddy follows every pull and cleans up afterwards
 
 LEADERBOARD
@@ -189,8 +189,8 @@ Real simulator captures live in `assets/app-store/ipad-01-splash.png` and
 ### Suggested Screenshot Scenes
 
 1. **Ziehen** — the official line with builders, cones, and formula
-2. **Session** — countdown with tobacco box, nose track, shovel buddy
-3. **Erfolg** — „Du bist spitze!" with stopwatch, nose trail, confetti
+2. **Session** — countdown with tobacco box, progress track, shovel buddy
+3. **Erfolg** — „Du bist spitze!" with stopwatch, Schulnote, confetti
 4. **Bestenliste** — podium, Maximilian eine Nasenlänge voraus
 5. **Wrapped** — year recap with doodle pie chart
 
@@ -211,14 +211,16 @@ Germany/Austria/Bavaria.
 - The app sells nothing, contains no ads, no purchases, and no links to
   tobacco vendors.
 - Age rating is 17+ with frequent/intense tobacco references declared.
-- The microphone is used exclusively during the user-started countdown
-  window to detect a sharp inhale as part of the game; audio is processed
-  on-device and never stored or transmitted (an optional debug recording
-  feature writes files only to the user's local Documents folder).
+- The microphone is used only during a user-started session (countdown
+  until result) to hear the pull — the game's only input, since the
+  sniffing tube is invisible to a touchscreen. Audio is analyzed on-device
+  and never stored or transmitted (an optional debug recording feature
+  writes files only to the user's local Documents folder). Without
+  microphone access the app explains why and links to Settings.
 - No account, no tracking, no data collection.
 
 The content is comedic satire; the app mocks tobacco rituals rather than
 promoting them.
 ```
 
-_Last updated: v1.0.0_
+_Last updated: v1.1.0_

@@ -15,26 +15,40 @@ tobacco-themed and adults-only, and don't sand the jokes off.
 
 **Target:** iPhone/iPad, iOS 26+, Swift, SwiftUI, SwiftData. **No external
 dependencies** — pure SwiftUI (Canvas, KeyframeAnimator, TimelineView) plus
-AVFoundation and small UIKit shims where SwiftUI has no API
-(`UITouch.majorRadius` in `Shared/Components/TouchLineOverlay.swift`).
+AVFoundation and small UIKit shims where SwiftUI has no API (idle timer,
+orientation lock, haptics).
 
 ## Domain Cheat Sheet
 
 - `Shared/Sniffonomics.swift` — the satire "science": line formula, fake
   friends, Nasenlänge (7 cm, Maximilian's eternal lead), 1 cm = 1 km Wrapped
-  conversion, destination ladder, points-per-cm for true physical line size.
+  conversion, destination ladder, points-per-cm for true physical line size,
+  pulling seconds per cm, and the amtliche Schulnote 1–6 (one pull within
+  1.5 s = 1; every extra attempt and dawdling after zero cost grades).
 - `Features/Sniff/` — the core gag: `SniffSessionViewModel` state machine
   (briefing → countdown 3→0 → armed challenge: detection opens 1.5 s before
-  zero and STAYS open until 100 % of the nose track is covered — audio spike
-  is only the anti-cheat gate, degrading to touch-only when the mic is
-  denied or dead; live stopwatch, ≤1.5 s = „perfekt", 45 s give-up timeout),
-  locked full-screen `SniffSessionView` (idle timer off, orientation locked
-  via `OrientationLock`, deferred system gestures, hold-the-lock escape,
-  nose-trail drawing), `SniffResultOverlay` (shoveler sweep + praise +
+  zero and STAYS open until the line is pulled — SOUND IS THE ONLY INPUT:
+  people pull through a tube, which a touchscreen can't see. Heard pulling
+  time clears the line at `Sniffonomics.pullSecondsPerCm`; nothing heard
+  for 3 s → „Wir hören nix"; between attempts „nachziehen!"; live
+  stopwatch, attempts counted for the grade, 45 s give-up timeout; no mic permission → no session, SniffView points to
+  Settings), locked full-screen `SniffSessionView` (idle timer off,
+  orientation locked via `OrientationLock`, deferred system gestures,
+  hold-the-lock escape; the purple track beside the tobacco box is the
+  progress display), `SniffResultOverlay` (shoveler sweep + praise +
   finish time).
-- `Core/Audio/SniffAudioService.swift` — AVAudioEngine tap, noise-floor EMA
-  + spike gates, ZCR for the Röhrchen heuristic, optional `.caf` debug
-  capture to `Documents/SniffCaptures/`.
+- `Core/Audio/SniffDetector.swift` — the pure pull recognizer. Measures
+  ONLY the hiss band above 5 kHz (biquad high-pass): airflow lives there,
+  voices and bar chatter don't — so a pull still counts under a louder
+  voice. Pulling = hiss level ≥ 12 dB above its floor (floor sinks fast,
+  rises slowly; ≥ −65 dBFS) for ≥ 0.2 s — fricatives, bumps and ticks are
+  too short — then reported buffer by buffer. `just replay [captures…]` runs it offline over
+  `.caf` debug captures (`Documents/SniffCaptures/`) and prints the cm a
+  capture would clear; without files it runs its self-check.
+- `Core/Audio/SniffAudioService.swift` — AVAudioEngine plumbing on a serial
+  queue (session activation blocks — never on main), started with the
+  countdown; opts into haptics/system sounds during recording, which iOS
+  mutes by default.
 - Calibration constants are marked with `ponytail:` comments — they are meant
   to be tuned from debug captures, not hardcoded away.
 
@@ -70,7 +84,10 @@ run `just setup` once after a fresh clone.
   (in `Shared/Theme/AppTheme.swift`), rough shapes from
   `Shared/Components/SketchShapes.swift`.
 - Persistence: ONE SwiftData model (`SniffSession`), queried directly in
-  views; the profile is `@AppStorage` — deliberately no stores.
+  views; the profile is `@AppStorage` — deliberately no stores. Store raw
+  facts (seconds, pulls) and derive the grade (`SniffSession.grade`, fails =
+  6); new fields need a default value so existing stores on friends' phones
+  migrate automatically.
 - Strings: German literals only, no `.xcstrings` entries — private gag app,
   deliberate deviation from the template's de+en rule.
 - **NEVER commit without user approval.**

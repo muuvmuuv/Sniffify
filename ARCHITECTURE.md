@@ -26,7 +26,8 @@ Sniffify/
 │
 ├── Core/
 │   ├── Audio/
-│   │   └── SniffAudioService.swift   # AVAudioEngine tap: spike + ZCR detection, debug capture
+│   │   ├── SniffDetector.swift       # pure pull recognizer (floor + sustained level + ZCR), `just replay`
+│   │   └── SniffAudioService.swift   # AVAudioEngine on a serial queue → SniffDetector, debug capture
 │   ├── Persistence/
 │   │   ├── AppSchema.swift           # model registry
 │   │   └── Models/SniffSession.swift # the ONE SwiftData model (one row per attempt)
@@ -42,7 +43,7 @@ Sniffify/
 ├── Shared/
 │   ├── Components/             # hand-drawn kit: SketchShapes (seeded wobble), PaperBackground,
 │   │                           # NoseDoodle, NoseWallpaper, SegmentedLineView, DoodlePie,
-│   │                           # TouchLineOverlay (UIKit majorRadius), Feedback (haptics)
+│   │                           # Feedback (haptics)
 │   ├── Extensions/
 │   ├── Theme/                  # AppTheme + PaperColors/DoodleFont (paper look)
 │   └── Sniffonomics.swift      # satire domain: formulas, friends, destinations, points-per-cm

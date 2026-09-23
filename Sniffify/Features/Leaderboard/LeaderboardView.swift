@@ -2,31 +2,42 @@
 //  LeaderboardView.swift
 //  Sniffify
 //
-//  "Die schnellste Nase": podium + ranked list of fake friends against the
-//  user's accumulated line length. Maximilian is always exactly one
-//  Nasenlänge ahead — that's the joke, he is not meant to be beatable.
+//  "Die schnellste Nase": podium + list of fake friends and the user,
+//  ranked by Notendurchschnitt (failed lines count as a 6), with the
+//  accumulated line length beside it. Maximilian is always exactly one
+//  Nasenlänge and a tenth of a grade ahead — that's the joke, he is not
+//  meant to be beatable.
 //
 
 import SwiftData
 import SwiftUI
 
 struct LeaderboardView: View {
-	@Query(filter: #Predicate<SniffSession> { $0.success == true })
-	private var sessions: [SniffSession]
+	@Query private var sessions: [SniffSession]
 
 	private struct Entry: Identifiable {
 		let name: String
 		let totalCm: Double
+		/// Notendurchschnitt; nil until the first session.
+		let averageGrade: Double?
 		let isUser: Bool
 		var id: String { name }
 	}
 
 	private var entries: [Entry] {
-		let myTotal = sessions.reduce(0) { $0 + $1.lineLengthCm }
-		var all = Sniffonomics.friends.map { Entry(name: $0.name, totalCm: $0.totalCm, isUser: false) }
-		all.append(Entry(name: "Maximilian", totalCm: myTotal + Sniffonomics.nasenlaengeCm, isUser: false))
-		all.append(Entry(name: "Du", totalCm: myTotal, isUser: true))
-		return all.sorted { $0.totalCm > $1.totalCm }
+		let myTotal = sessions.filter(\.success).reduce(0) { $0 + $1.lineLengthCm }
+		let myGrade = sessions.averageGrade
+		var all = Sniffonomics.friends.map {
+			Entry(name: $0.name, totalCm: $0.totalCm, averageGrade: $0.averageGrade, isUser: false)
+		}
+		all.append(
+			Entry(
+				name: "Maximilian", totalCm: myTotal + Sniffonomics.nasenlaengeCm,
+				averageGrade: myGrade.map { $0 - Sniffonomics.maximilianGradeLead } ?? Sniffonomics.maximilianIdleGrade,
+				isUser: false))
+		all.append(Entry(name: "Du", totalCm: myTotal, averageGrade: myGrade, isUser: true))
+		// no grade yet = unranked, below everyone
+		return all.sorted { ($0.averageGrade ?? 7) < ($1.averageGrade ?? 7) }
 	}
 
 	var body: some View {
@@ -42,6 +53,9 @@ struct LeaderboardView: View {
 						Text("Die schnellste Nase")
 							.font(DoodleFont.hand(16))
 							.foregroundStyle(PaperColors.marker)
+						Text("nach Notendurchschnitt")
+							.font(DoodleFont.hand(12))
+							.foregroundStyle(PaperColors.pencil)
 					}
 					.padding(.top, AppSpacing.xxl)
 
@@ -104,8 +118,15 @@ struct LeaderboardView: View {
 			Text(entry.name)
 				.font(DoodleFont.hand(17))
 			Spacer()
-			Text("\((entry.totalCm / 100).formatted(.number.precision(.fractionLength(2)))) m")
+			VStack(alignment: .trailing, spacing: 0) {
+				Text(
+					"Ø \(entry.averageGrade.map { $0.formatted(.number.precision(.fractionLength(1))) } ?? "–")"
+				)
 				.font(DoodleFont.heading(16))
+				Text("\((entry.totalCm / 100).formatted(.number.precision(.fractionLength(2)))) m")
+					.font(DoodleFont.hand(12))
+					.opacity(0.7)
+			}
 		}
 		.foregroundStyle(entry.isUser ? PaperColors.marker : PaperColors.ink)
 	}

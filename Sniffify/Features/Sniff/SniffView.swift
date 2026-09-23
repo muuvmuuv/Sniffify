@@ -13,9 +13,10 @@ struct SniffView: View {
 	@AppStorage("weightKg") private var weightKg = 80.0
 	@AppStorage("debugAudioCapture") private var debugAudioCapture = false
 	@Environment(\.displayScale) private var displayScale
+	@Environment(\.openURL) private var openURL
 	@State private var withFriends = false
 	@State private var showSession = false
-	@State private var micAuthorized = false
+	@State private var showMicDenied = false
 
 	private var lineLengthCm: Double {
 		Sniffonomics.lineLengthCm(heightCm: heightCm, weightKg: weightKg)
@@ -98,15 +99,18 @@ struct SniffView: View {
 
 					Spacer()
 
-					Text("Tabak in die Box, Nase auf die lila Spur.\nTimer starten — bei Null ziehst du.")
+					Text("Tabak in die Box, Röhrchen ansetzen.\nTimer starten — bei Null ziehst du.")
 						.font(DoodleFont.hand(15))
 						.multilineTextAlignment(.center)
 						.foregroundStyle(PaperColors.pencil)
 
 					Button("Ziehen 👃") {
 						Task {
-							micAuthorized = await SniffAudioService.requestPermission()
-							showSession = true
+							if await SniffAudioService.requestPermission() {
+								showSession = true
+							} else {
+								showMicDenied = true
+							}
 						}
 					}
 					.buttonStyle(DoodleButtonStyle(color: PaperColors.marker))
@@ -120,8 +124,19 @@ struct SniffView: View {
 				lineLengthCm: lineLengthCm,
 				lineWidthMm: lineWidthMm,
 				withFriends: withFriends,
-				micAuthorized: micAuthorized,
 				debugCapture: debugAudioCapture
+			)
+		}
+		.alert("Ohne Mikro kein Zug", isPresented: $showMicDenied) {
+			Button("Einstellungen") {
+				if let url = URL(string: UIApplication.openSettingsURLString) {
+					openURL(url)
+				}
+			}
+			Button("Abbrechen", role: .cancel) {}
+		} message: {
+			Text(
+				"Sniffify hört, wie du ziehst — ein Röhrchen sieht der Bildschirm nicht. Erlaub das Mikrofon in den Einstellungen."
 			)
 		}
 	}

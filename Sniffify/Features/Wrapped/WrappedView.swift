@@ -2,28 +2,33 @@
 //  WrappedView.swift
 //  Sniffify
 //
-//  The year recap from the sketch: totals, Nasenkilometer, the walking
-//  destination punchline, and the Alleine/Mit-Freunden doodle pie —
-//  shareable as an image.
+//  The year recap from the sketch: totals, Notendurchschnitt, Nasenkilometer,
+//  the walking destination punchline, and the Alleine/Mit-Freunden doodle
+//  pie — shareable as an image.
 //
 
 import SwiftData
 import SwiftUI
 
 struct WrappedView: View {
-	@Query(filter: #Predicate<SniffSession> { $0.success == true })
-	private var sessions: [SniffSession]
+	@Query private var sessions: [SniffSession]
 
 	private var year: Int {
 		Calendar.current.component(.year, from: .now)
 	}
 
+	/// Every attempt this year, failed ones included — they count in the
+	/// Notendurchschnitt.
 	private var yearSessions: [SniffSession] {
 		sessions.filter { Calendar.current.component(.year, from: $0.date) == year }
 	}
 
+	private var yearLines: [SniffSession] {
+		yearSessions.filter(\.success)
+	}
+
 	private var totalCm: Double {
-		yearSessions.reduce(0) { $0 + $1.lineLengthCm }
+		yearLines.reduce(0) { $0 + $1.lineLengthCm }
 	}
 
 	private var km: Double {
@@ -31,9 +36,9 @@ struct WrappedView: View {
 	}
 
 	private var aloneFraction: Double {
-		guard !yearSessions.isEmpty else { return 1 }
-		let alone = yearSessions.filter { !$0.withFriends }.count
-		return Double(alone) / Double(yearSessions.count)
+		guard !yearLines.isEmpty else { return 1 }
+		let alone = yearLines.filter { !$0.withFriends }.count
+		return Double(alone) / Double(yearLines.count)
 	}
 
 	var body: some View {
@@ -76,11 +81,16 @@ struct WrappedView: View {
 				.padding(.horizontal, AppSpacing.xxxl)
 
 			VStack(spacing: AppSpacing.sm) {
-				Text("\(yearSessions.count) Lines gezogen")
+				Text("\(yearLines.count) Lines gezogen")
 					.font(DoodleFont.hand(18))
 				Text("\((totalCm / 100).formatted(.number.precision(.fractionLength(1)))) m Gesamtlänge")
 					.font(DoodleFont.hand(18))
-				if let best = yearSessions.filter({ $0.seconds > 0 }).map(\.seconds).min() {
+				if let average = yearSessions.averageGrade {
+					Text("Notendurchschnitt: \(average.formatted(.number.precision(.fractionLength(1))))")
+						.font(DoodleFont.heading(18))
+						.foregroundStyle(PaperColors.marker)
+				}
+				if let best = yearLines.filter({ $0.seconds > 0 }).map(\.seconds).min() {
 					Text(
 						"Schnellste Nase: \(best.formatted(.number.precision(.fractionLength(1)))) s"
 					)

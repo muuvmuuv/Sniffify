@@ -39,6 +39,12 @@ lsp:
 # Format and build
 check: format build
 
+# Replay sniff debug captures (.caf) through the pull detector; no files = self-check
+replay *files:
+    @mkdir -p .build
+    swiftc -parse-as-library -O scripts/sniff-replay.swift Sniffify/Core/Audio/SniffDetector.swift Sniffify/Shared/Sniffonomics.swift -o .build/sniff-replay
+    .build/sniff-replay {{files}}
+
 # Show available simulators
 simulators:
     xcrun simctl list devices available | grep -E "iPhone|iPad"

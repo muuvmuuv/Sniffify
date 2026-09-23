@@ -3,11 +3,11 @@
 //  Sniffify
 //
 //  The locked full-screen sniff session: briefing, film countdown, armed
-//  window with live touch coverage, and the success/fail result overlays.
-//  The line renders at true physical size along the screen's long axis
-//  (vertical in portrait, horizontal in landscape). Screen stays awake,
-//  system edges are deferred; exit only via two-finger hold (a nose can't
-//  fake that).
+//  window with the line clearing as the pull is heard, and the success/fail
+//  result overlays. The line renders at true physical size along the
+//  screen's long axis (vertical in portrait, horizontal in landscape).
+//  Screen stays awake, system edges are deferred; exit only by holding the
+//  lock.
 //
 
 import SwiftData
@@ -24,15 +24,13 @@ struct SniffSessionView: View {
 	@State private var escapePressing = false
 
 	init(
-		lineLengthCm: Double, lineWidthMm: Double, withFriends: Bool, micAuthorized: Bool,
-		debugCapture: Bool
+		lineLengthCm: Double, lineWidthMm: Double, withFriends: Bool, debugCapture: Bool
 	) {
 		_vm = State(
 			initialValue: SniffSessionViewModel(
 				lineLengthCm: lineLengthCm,
 				lineWidthMm: lineWidthMm,
 				withFriends: withFriends,
-				micAuthorized: micAuthorized,
 				debugCapture: debugCapture
 			))
 	}
@@ -40,15 +38,14 @@ struct SniffSessionView: View {
 	private struct LineLayout: Equatable {
 		/// Where the tobacco physically lies: a rough outlined box.
 		let boxFrame: CGRect
-		/// The parallel guide the nose glides along — offset from the box so
-		/// the nose doesn't plough through the tobacco. Coverage tracks here.
+		/// The parallel progress track: its dashes vanish as the pull is heard.
 		let trackFrame: CGRect
 		let axis: Axis
 		let truncated: Bool
 	}
 
-	/// Gap between nose track and tobacco box.
-	/// ponytail: eyeballed; adjust after real-nose testing.
+	/// Gap between progress track and tobacco box, so the tube never hovers
+	/// over the track and the dashes stay visible.
 	private static let trackGap: CGFloat = 90
 	private static let trackThickness: CGFloat = 12
 
@@ -66,17 +63,6 @@ struct SniffSessionView: View {
 					lineArea(layout: layout)
 				}
 
-				// the actual nose path, kept on the result screen — the shoveler
-				// "cleans it up" on success, so it fades under his sweep
-				TrailShape(points: vm.noseTrail)
-					.stroke(
-						PaperColors.marker.opacity(0.3),
-						style: StrokeStyle(lineWidth: 22, lineCap: .round, lineJoin: .round)
-					)
-					.opacity(vm.phase == .success ? 0 : 1)
-					.animation(.easeInOut(duration: 2.2).delay(0.6), value: vm.phase == .success)
-					.allowsHitTesting(false)
-
 				switch vm.phase {
 				case .briefing:
 					briefing
@@ -90,7 +76,7 @@ struct SniffSessionView: View {
 				case .success:
 					SniffResultOverlay(
 						kind: .success, lineFrame: layout.boxFrame, analysis: vm.analysisVerdict,
-						finishSeconds: vm.finishSeconds
+						finishSeconds: vm.finishSeconds, pulls: vm.pullCount
 					) {
 						finish()
 					} onRetry: {
@@ -106,16 +92,8 @@ struct SniffSessionView: View {
 					}
 				}
 
-				if vm.isDetecting {
-					TouchLineOverlay { touches in
-						vm.handleTouches(touches)
-					}
-				}
-
 				escapeLock
 			}
-			.onAppear { vm.lineFrame = layout.trackFrame }
-			.onChange(of: layout) { vm.lineFrame = layout.trackFrame }
 		}
 		.statusBarHidden(true)
 		.persistentSystemOverlays(.hidden)
@@ -139,7 +117,8 @@ struct SniffSessionView: View {
 					lineLengthCm: vm.lineLengthCm,
 					withFriends: vm.withFriends,
 					success: newPhase == .success,
-					seconds: vm.finishSeconds ?? 0
+					seconds: vm.finishSeconds ?? 0,
+					pulls: vm.pullCount
 				))
 		}
 	}
@@ -149,7 +128,7 @@ struct SniffSessionView: View {
 	/// True-to-size layout along the screen's long axis: vertical in portrait,
 	/// horizontal in landscape. Box length and width come from the physical
 	/// cm/mm values via pointsPerCm; if the screen is shorter than the line,
-	/// it is capped ("amtlich gekürzt"). The nose track runs parallel,
+	/// it is capped ("amtlich gekürzt"). The progress track runs parallel,
 	/// offset by trackGap (portrait: left of the box, landscape: above it).
 	private func lineLayout(in size: CGSize) -> LineLayout {
 		let ppcm = Sniffonomics.pointsPerCm(displayScale: displayScale)
@@ -196,9 +175,9 @@ struct SniffSessionView: View {
 					.position(x: layout.boxFrame.midX, y: layout.boxFrame.midY)
 			}
 
-			// nose track
+			// progress track
 			SegmentedLineView(
-				covered: vm.coveredSegments,
+				covered: Set(0..<vm.clearedSegments),
 				segments: SniffSessionViewModel.segmentCount,
 				color: PaperColors.marker,
 				axis: layout.axis
@@ -206,7 +185,7 @@ struct SniffSessionView: View {
 			.frame(width: layout.trackFrame.width, height: layout.trackFrame.height)
 			.position(x: layout.trackFrame.midX, y: layout.trackFrame.midY)
 
-			// the shoveler follows the nose on the far side of the box
+			// the shoveler follows the pull on the far side of the box
 			if vm.isDetecting {
 				TimelineView(.animation) { context in
 					LineHelperDoodle()
@@ -215,7 +194,8 @@ struct SniffSessionView: View {
 							.degrees(sin(context.date.timeIntervalSinceReferenceDate * 5) * 7))
 				}
 				.position(shovelerPosition(layout: layout))
-				.animation(AppAnimations.smooth, value: vm.noseProgress)
+				// a spring keeps its velocity when retargeted at mic rate
+				.animation(.smooth(duration: 0.25), value: vm.progress)
 			}
 
 			if layout.axis == .vertical {
@@ -260,11 +240,11 @@ struct SniffSessionView: View {
 		if layout.axis == .vertical {
 			return CGPoint(
 				x: layout.boxFrame.maxX + 44,
-				y: layout.boxFrame.minY + layout.boxFrame.height * vm.noseProgress
+				y: layout.boxFrame.minY + layout.boxFrame.height * vm.progress
 			)
 		}
 		return CGPoint(
-			x: layout.boxFrame.minX + layout.boxFrame.width * vm.noseProgress,
+			x: layout.boxFrame.minX + layout.boxFrame.width * vm.progress,
 			y: layout.boxFrame.maxY + 44
 		)
 	}
@@ -310,33 +290,49 @@ struct SniffSessionView: View {
 
 			if let armedAt = vm.armedAt {
 				TimelineView(.periodic(from: .now, by: 0.05)) { context in
-					Text(
-						"⏱ \(max(0, context.date.timeIntervalSince(armedAt)).formatted(.number.precision(.fractionLength(1)))) s"
-					)
-					.font(DoodleFont.heading(24))
-					.foregroundStyle(PaperColors.ink)
-					.monospacedDigit()
+					VStack(spacing: AppSpacing.lg) {
+						Text(
+							"⏱ \(max(0, context.date.timeIntervalSince(armedAt)).formatted(.number.precision(.fractionLength(1)))) s"
+						)
+						.font(DoodleFont.heading(24))
+						.foregroundStyle(PaperColors.ink)
+						.monospacedDigit()
+
+						pullStatus(at: context.date)
+					}
 				}
 			}
-
-			switch vm.touchVerdict {
-			case .nose:
-				Text("WÜRDIG 👃")
-					.font(DoodleFont.heading(24))
-					.foregroundStyle(PaperColors.check)
-					.rotationEffect(.degrees(-6))
-			case .finger:
-				Text("Das ist ein Finger, du Schummler!")
-					.font(DoodleFont.heading(18))
-					.foregroundStyle(PaperColors.cross)
-					.rotationEffect(.degrees(-3))
-			case .none:
-				Text("Die Nase ans Glas!")
-					.font(DoodleFont.hand(17))
-					.foregroundStyle(PaperColors.pencil)
-			}
 		}
+		.multilineTextAlignment(.center)
 		.allowsHitTesting(false)
+	}
+
+	@ViewBuilder
+	private func pullStatus(at date: Date) -> some View {
+		if vm.micFailed {
+			Text("Mikro streikt 🎤\nSchloss halten zum Abbrechen")
+				.font(DoodleFont.heading(18))
+				.foregroundStyle(PaperColors.cross)
+		} else if vm.isQuiet(at: date) {
+			Text("Wir hören nix —\nkräftiger ziehen! 🔊")
+				.font(DoodleFont.heading(20))
+				.foregroundStyle(PaperColors.cross)
+				.rotationEffect(.degrees(-4))
+		} else if vm.isPulling(at: date) {
+			Text("WÜRDIG 👃")
+				.font(DoodleFont.heading(24))
+				.foregroundStyle(PaperColors.check)
+				.rotationEffect(.degrees(-6))
+		} else if vm.progress > 0 {
+			Text("Da liegt noch was —\nnachziehen! 👃")
+				.font(DoodleFont.heading(20))
+				.foregroundStyle(PaperColors.ink)
+				.rotationEffect(.degrees(3))
+		} else {
+			Text("Kräftig durchs Röhrchen!")
+				.font(DoodleFont.hand(17))
+				.foregroundStyle(PaperColors.pencil)
+		}
 	}
 
 	private var escapeLock: some View {
@@ -380,5 +376,5 @@ struct SniffSessionView: View {
 
 #Preview {
 	SniffSessionView(
-		lineLengthCm: 16, lineWidthMm: 5, withFriends: false, micAuthorized: false, debugCapture: false)
+		lineLengthCm: 16, lineWidthMm: 5, withFriends: false, debugCapture: false)
 }

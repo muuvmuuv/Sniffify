@@ -24,7 +24,7 @@ works exclusively with legal snuff tobacco. Don't be weird about it.
 
 <p>
   <img src="assets/screenshot-1.webp" width="180" alt="Ziehen tab with the official personal line">
-  <img src="assets/screenshot-2.webp" width="180" alt="Sniff session countdown with tobacco box, nose track and shoveler">
+  <img src="assets/screenshot-2.webp" width="180" alt="Sniff session countdown with tobacco box, progress track and shoveler">
   <img src="assets/screenshot-3.webp" width="180" alt="Success screen: Du bist spitze, stopwatch, nose trail and confetti">
   <img src="assets/screenshot-4.webp" width="180" alt="Bestenliste podium — Maximilian eine Nasenlänge voraus">
   <img src="assets/screenshot-5.webp" width="180" alt="Sniffify Wrapped year recap with doodle pie chart">
@@ -38,21 +38,23 @@ Demo video (muted, 1.2×): [MP4](assets/demo.mp4) · [WebM](assets/demo.webm)
 1. **Onboarding** — 18+ satire splash (with the rejected „Schneekönig" icon
    gag), then height + weight: science needs data, your line is personal.
 2. **Ziehen** — the tobacco goes into a hand-drawn box rendered at **true
-   physical size** (points-per-cm), marked out like a construction site. A
-   parallel purple **nose track** shows where the nose glides — next to the
-   tobacco, not through it. Film-style countdown 3→0, then the challenge:
-   the line must be **completely gone** — every dash of the track
-   nose-covered — while the mic listens as an anti-cheat gate. A botched
-   pull doesn't fail; the stopwatch just runs (finish within 1.5 s of zero
-   for „PERFEKT!"). The little shoveler follows your nose the whole way and
-   sweeps up on success — „Du bist spitze!". Screen stays awake, rotation is
-   locked, system edges are deferred; the only exits are finishing, giving
-   up for 45 s, or holding the little lock. A nose fat enough on the glass
-   earns „WÜRDIG 👃"; a finger gets called out as cheating. The acoustic
-   analysis even guesses Röhrchen vs. Direktzug, and your actual nose path
-   is drawn on the result screen as evidence.
-3. **Bestenliste** — podium of „Die schnellste Nase". Maximilian is pinned
-   exactly one Nasenlänge (7 cm) ahead of you. Forever. That's the joke.
+   physical size** (points-per-cm), marked out like a construction site.
+   Film-style countdown 3→0, then the challenge: pull through your tube —
+   the **mic hears the pull** (a tube is invisible to a touchscreen) and
+   the purple track beside the box empties as you go, until the line is
+   **completely gone**. A botched pull doesn't fail; the stopwatch just runs
+   and you pull again — but the result comes with an amtliche Schulnote:
+   one pull within 1.5 s of zero is a 1 („PERFEKT!"), every extra attempt
+   and every bit of dawdling costs a grade. Silence gets a „Wir hören nix —
+   kräftiger ziehen!". The little shoveler follows your pull
+   the whole way and sweeps up on success — „Du bist spitze!". Screen stays
+   awake, rotation is locked, system edges are deferred; the only exits are
+   finishing, giving up for 45 s, or holding the little lock. The acoustic
+   analysis even guesses Röhrchen vs. Direktzug.
+3. **Bestenliste** — podium of „Die schnellste Nase", ranked by
+   Notendurchschnitt (a failed line counts as a 6). Maximilian is pinned
+   exactly one Nasenlänge (7 cm) and a tenth of a grade ahead of you — a
+   0,9 if he has to. Forever. That's the joke.
 4. **Wrapped** — year totals converted at the official rate of
    1 cm Line = 1 km Fußweg, with a destination ladder ending in Peru, an
    Alleine/Mit-Freunden doodle pie, and share-as-image.
@@ -81,7 +83,8 @@ from Settings → Debug:
 
 | Knob | Where |
 |------|-------|
-| Spike threshold / absolute gate | `Core/Audio/SniffAudioService.swift` |
+| Pull threshold / absolute gate / min duration | `Core/Audio/SniffDetector.swift` (replay captures: `just replay <files>`) |
+| Pulling seconds per cm of line | `Shared/Sniffonomics.swift` |
 | Tube-vs-direct ZCR threshold | `Features/Sniff/SniffSessionViewModel.swift` |
 | Coverage %, nose radius, window | `Features/Sniff/SniffSessionViewModel.swift` |
 | Points-per-cm (true line size) | `Shared/Sniffonomics.swift` |

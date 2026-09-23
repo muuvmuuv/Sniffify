@@ -25,6 +25,16 @@
     "⏱ %@ s" : {
 
     },
+    "⏱ %@ s · %@" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "⏱ %1$@ s · %2$@"
+          }
+        }
+      }
+    },
     "👑" : {
 
     },
@@ -66,10 +76,10 @@
     "BESTENLISTE" : {
 
     },
-    "Daneben geniest!" : {
+    "Da liegt noch was —\nnachziehen! 👃" : {
 
     },
-    "Das ist ein Finger, du Schummler!" : {
+    "Daneben geniest!" : {
 
     },
     "Daten" : {
@@ -85,9 +95,6 @@
 
     },
     "Die Baustelle bleibt bestehen." : {
-
-    },
-    "Die Nase ans Glas!" : {
 
     },
     "Die schnellste Nase" : {
@@ -176,13 +183,22 @@
     "Ja, Nase auf null" : {
 
     },
+    "Kräftig durchs Röhrchen!" : {
+
+    },
     "Los geht's 👃" : {
 
     },
     "Maximilian ist dir eine Nasenlänge voraus." : {
 
     },
+    "Mikro streikt 🎤\nSchloss halten zum Abbrechen" : {
+
+    },
     "Mit Freunden" : {
+
+    },
+    "nach Notendurchschnitt" : {
 
     },
     "No settings yet" : {
@@ -202,16 +218,25 @@
         }
       }
     },
+    "Notendurchschnitt: %@" : {
+
+    },
     "Nur Sandmännchen" : {
 
     },
     "Nur Schaufel-Helfer" : {
 
     },
+    "Ø %@" : {
+
+    },
     "Offizielle Line" : {
 
     },
     "Ohne Auswahl entscheidet die Uhrzeit: tagsüber schaufelt der gelbe Helfer, ab 19 Uhr übernimmt das Sandmännchen." : {
+
+    },
+    "Ohne Mikro kein Zug" : {
 
     },
     "Profil" : {
@@ -249,6 +274,9 @@
     "SNIFFIFY" : {
 
     },
+    "Sniffify hört, wie du ziehst — ein Röhrchen sieht der Bildschirm nicht. Erlaub das Mikrofon in den Einstellungen." : {
+
+    },
     "Sniffify Wrapped %@" : {
 
     },
@@ -272,7 +300,7 @@
     "Tabak hier rein" : {
 
     },
-    "Tabak in die Box, Nase auf die lila Spur.\nTimer starten — bei Null ziehst du." : {
+    "Tabak in die Box, Röhrchen ansetzen.\nTimer starten — bei Null ziehst du." : {
 
     },
     "Teilen 📤" : {
@@ -319,6 +347,9 @@
           }
         }
       }
+    },
+    "Wir hören nix —\nkräftiger ziehen! 🔊" : {
+
     },
     "Wirklich alles vergessen?" : {
 

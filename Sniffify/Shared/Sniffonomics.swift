@@ -12,6 +12,11 @@ import Foundation
 enum Sniffonomics {
 	/// One Nasenlänge — the eternal gap between you and Maximilian.
 	static let nasenlaengeCm: Double = 7
+	/// Maximilian's Notendurchschnitt is always this much better than yours —
+	/// even when that means a 0,9.
+	static let maximilianGradeLead: Double = 0.1
+	/// Maximilian's Notendurchschnitt while you have none yet.
+	static let maximilianIdleGrade: Double = 4.0
 
 	/// Screen points per physical centimeter, so the line renders true to
 	/// size. Derived from typical iPhone panel density (~460 ppi @3x,
@@ -38,21 +43,61 @@ enum Sniffonomics {
 		min(3 + weightKg / 40, 8)
 	}
 
+	/// Official pulling rate: this many seconds of heard pull clear 1 cm of
+	/// line. A full, clean pull is heard for ≈ 0,75 s and clears a 10 cm line
+	/// in one go; a weaker one needs a second attempt — which costs a grade.
+	/// ponytail: tuned on three captures of direct pulls — `just replay`
+	/// prints the cm a capture's pulls would clear.
+	static let pullSecondsPerCm: Double = 0.07
+
+	// MARK: - Bewertung
+
+	/// Finishing within this after zero counts as „PERFEKT".
+	static let perfectSeconds: Double = 1.5
+
+	/// Amtliche Schulnote 1…6 for a cleared line: one pull within
+	/// `perfectSeconds` is a 1; every extra attempt costs a grade, and so
+	/// does dawdling after zero.
+	static func grade(pulls: Int, seconds: Double) -> Int {
+		let dawdling =
+			switch seconds {
+			case ...perfectSeconds: 0
+			case ...4: 1
+			case ...8: 2
+			default: 3
+			}
+		return min(6, max(1, pulls) + dawdling)
+	}
+
+	/// The Zeugnis line for a grade, with the official German grade word.
+	static func gradeVerdict(_ grade: Int) -> String {
+		switch grade {
+		case 1: "Note 1 — sehr gut\nEin Zug, alles weg. PERFEKT!"
+		case 2: "Note 2 — gut\nMaximilian hätte es schneller gezogen."
+		case 3: "Note 3 — befriedigend\nSolide Nachzieharbeit."
+		case 4: "Note 4 — ausreichend\nDie Nase muss nachsitzen."
+		case 5: "Note 5 — mangelhaft\nMehr daneben als drin."
+		default: "Note 6 — ungenügend\nSetzen."
+		}
+	}
+
 	// MARK: - Bestenliste
 
 	struct Friend: Identifiable {
 		let name: String
 		let totalCm: Double
+		/// Notendurchschnitt — the Bestenliste ranks by it.
+		let averageGrade: Double
 		var id: String { name }
 	}
 
 	/// Static rivals; beatable. Maximilian is NOT here — he is always exactly
-	/// one Nasenlänge ahead of the user, forever ("Maximilian ist dir eine
-	/// Nasenlänge voraus.").
+	/// one Nasenlänge and `maximilianGradeLead` ahead of the user, forever
+	/// ("Maximilian ist dir eine Nasenlänge voraus.").
 	static let friends: [Friend] = [
-		Friend(name: "Sepp", totalCm: 480),
-		Friend(name: "Vroni", totalCm: 260),
-		Friend(name: "Xaver", totalCm: 95),
+		Friend(name: "Sepp", totalCm: 480, averageGrade: 1.4),
+		Friend(name: "Vroni", totalCm: 260, averageGrade: 2.1),
+		Friend(name: "Xaver", totalCm: 95, averageGrade: 4.3),
 	]
 
 	// MARK: - Wrapped
